@@ -1,0 +1,2 @@
+n jobs; n machines; number of data (number of sets machine-times per job)
+0 0 1.0; n machines; and then a sequence of machine-processing time
