@@ -13,7 +13,7 @@ public class Menu {
 
     public static void main(String args[]){
 //        fileName = Console.readString("Please, load a Taillard file with txt extension");
-        fileName = "C:\\Users\\christine\\Desktop\\taillard\\tai02.txt";
+        fileName = "C:\\Users\\christine\\Desktop\\taillard\\tai15x15-1.txt";
         try {
             service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
             service.getData(fileName);

@@ -3,11 +3,7 @@ package logic.parser.impl;
 import logic.instances.Job;
 import logic.instances.Operation;
 import logic.instances.TaillardInstance;
-import logic.parser.FileParser;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,34 +15,67 @@ public class TaillardFileImpl extends FileParserImpl<TaillardInstance> {
     public TaillardInstance parseFile(String data) {
         String[] lines = data.split("\n");
 
-        // first line
-        String[] firstLine = lines[0].split(" ");
-        int nJobs = Integer.parseInt(firstLine[0]);
-        int nMachines = Integer.parseInt(firstLine[1]);
-        int nSets = Integer.parseInt(firstLine[2]);
+        // first line of info (which would be second line of input)
+        String secondLine = lines[1];
+        secondLine = secondLine.replaceAll(" +"," ").trim();
 
-        int operations = nSets / nJobs;
-        List<Job> jobs = new ArrayList<Job>();
+        String[] info = secondLine.split(" ");
+        int nJobs = Integer.parseInt(info[0]);
+        int nMachines = Integer.parseInt(info[1]);
+        int timeSeed = Integer.parseInt(info[2]);
+        int machineSeed = Integer.parseInt(info[3]);
+        int upperBound = Integer.parseInt(info[4]);
+        int lowerBound = Integer.parseInt(info[5]);
 
-        // rest
-        for(int row = 1; row <= nJobs; row++) {
-            String[] line = lines[row].split(" ");
-            int n1 = Integer.parseInt(line[0]);
-            int n2 = Integer.parseInt(line[1]);
-            double n3 = Double.parseDouble(line[2]);
-            int n4 = Integer.parseInt(line[3]);
-;
-            List<Operation> operationsPerJob = new ArrayList<Operation>();
-            for(int seq = 4; seq < 4 + operations * 2; seq += 2) {
-                int machine = Integer.parseInt(line[seq]);
-                int processingTime = Integer.parseInt(line[seq+1]);
-                operationsPerJob.add(new Operation(machine, processingTime));
+        System.out.println(nJobs + " " + nMachines + " " + timeSeed+ " " + machineSeed + " " + upperBound + " " + lowerBound);
+
+
+        // Times part
+        List<int[]> jobTimes = new ArrayList<>();
+        for (int row = 3; row < nJobs+3; row++) {
+            String line = lines[row].replaceAll(" +"," ").trim();
+            String[] lineTimes = line.split(" ");
+            int[] times = new int[nJobs];
+            for (int i = 0; i < nMachines; i++) {
+                times[i] = Integer.parseInt(lineTimes[i]);
             }
+            jobTimes.add(times);
 
-            jobs.add(new Job(n1, n2, n3, n4, operationsPerJob));
         }
 
-        return new TaillardInstance(nJobs, nMachines, nSets, jobs);
+        // Machines part
+
+        List<int[]> jobMachines = new ArrayList<>();
+        for (int row = nJobs+4; row < nJobs*2+4; row++) {
+            String line = lines[row].replaceAll(" +"," ").trim();
+            String[] lineTimes = line.split(" ");
+            int[] machines = new int[nJobs];
+            for (int i = 0; i < nMachines; i++) {
+                machines[i] = Integer.parseInt(lineTimes[i]);
+            }
+            jobMachines.add(machines);
+
+        }
+
+        // Create jobs and operations
+        List<Job> jobs = new ArrayList<Job>();
+
+        for (int i = 0; i < nJobs; i++) {
+            List<Operation> operationsPerJob = new ArrayList<Operation>();
+            for (int j = 0; j < nMachines; j++) {
+                operationsPerJob.add(new Operation(jobTimes.get(i)[j], jobMachines.get(i)[j]));
+            }
+            jobs.add(new Job(operationsPerJob));
+        }
+
+        for (Job j: jobs) {
+            for (Operation o: j.getOperations()) {
+                System.out.print(o.toString());
+            }
+            System.out.println();
+        }
+
+        return new TaillardInstance(nJobs, nMachines, timeSeed, machineSeed, upperBound, lowerBound, jobs);
     }
 
 }
