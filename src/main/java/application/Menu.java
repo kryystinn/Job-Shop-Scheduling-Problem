@@ -1,6 +1,6 @@
 package application;
 
-import logic.instances.TaillardInstance;
+import logic.instances.taillard.TaillardInstance;
 import logic.parser.FileData;
 import logic.parser.impl.FileDataImpl;
 import logic.parser.impl.TaillardFileImpl;

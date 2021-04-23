@@ -1,13 +1,9 @@
 package logic.parser.impl;
 
 import logic.exceptions.ParserException;
-import logic.instances.TaillardInstance;
 import logic.parser.FileParser;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 

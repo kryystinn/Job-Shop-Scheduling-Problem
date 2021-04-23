@@ -2,7 +2,7 @@ package logic.parser.impl;
 
 import logic.instances.Job;
 import logic.instances.Operation;
-import logic.instances.TaillardInstance;
+import logic.instances.taillard.TaillardInstance;
 
 import java.util.ArrayList;
 import java.util.List;
