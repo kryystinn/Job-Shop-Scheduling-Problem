@@ -22,4 +22,9 @@ public class TaillardInstance extends Instance {
         this.lowerBound = lowerBound;
         this.jobs = jobs;
     }
+
+    @Override
+    public List<Job> getJobs() {
+        return jobs;
+    }
 }
