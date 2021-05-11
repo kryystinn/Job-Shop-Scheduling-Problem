@@ -27,4 +27,5 @@ public class TaillardInstance extends Instance {
     public List<Job> getJobs() {
         return jobs;
     }
+
 }
