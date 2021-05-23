@@ -1,26 +1,17 @@
 package logic.graph;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class Graph<T> {
+public interface Graph<T> {
 
-    private List<Edge> edges;
-    private List<Node> nodes;
+    void addNode(T node);
 
+    void addEdge(T source, T destination);
+    void addEdge(T source, T destination, boolean bidirectional);
 
-    public Graph(){
-        edges = new ArrayList<Edge>();
-        nodes = new ArrayList<Node>();
-    }
+    boolean hasEdge(T source, T destination);
 
-    public Node addNode(T node){
-        // if (!findNode()) y si no es null ...
-        return null;
-    }
+    List<T> getOutEdges(T node);
 
-    public Edge addEdge(Node source, Node destination){
-        //check si ninguno son null, y si no existe ya el edge en el grafo
-        return new Edge(source, destination);
-    }
+    //List<T> getInEdges(T node);
 }
