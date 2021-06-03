@@ -16,8 +16,8 @@ public class ScheduleInstance {
         this.schedulingAlgorithm = algorithm;
     }
 
-    public List<ResultTask> executeAlgorithm(Instance data) throws AlgorithmException {
-        results = this.schedulingAlgorithm.run(data);
+    public List<ResultTask> executeAlgorithm() throws AlgorithmException {
+        results = this.schedulingAlgorithm.run();
         return results;
     }
 }

@@ -35,7 +35,7 @@ public class TaillardFileImpl extends FileParserImpl<TaillardInstance> {
         for (int row = 3; row < nJobs+3; row++) {
             String line = lines[row].replaceAll(" +"," ").trim();
             String[] lineTimes = line.split(" ");
-            int[] times = new int[nJobs];
+            int[] times = new int[nMachines];
             for (int i = 0; i < nMachines; i++) {
                 times[i] = Integer.parseInt(lineTimes[i]);
             }
@@ -49,7 +49,7 @@ public class TaillardFileImpl extends FileParserImpl<TaillardInstance> {
         for (int row = nJobs+4; row < nJobs*2+4; row++) {
             String line = lines[row].replaceAll(" +"," ").trim();
             String[] lineTimes = line.split(" ");
-            int[] machines = new int[nJobs];
+            int[] machines = new int[nMachines];
             for (int i = 0; i < nMachines; i++) {
                 machines[i] = Integer.parseInt(lineTimes[i]);
             }
@@ -63,9 +63,11 @@ public class TaillardFileImpl extends FileParserImpl<TaillardInstance> {
         int operationCount = 1;
         for (int i = 0; i < nJobs; i++) {
             List<Operation> operationsPerJob = new ArrayList<Operation>();
+            int beforeEndTime = 0;
             for (int j = 0; j < nMachines; j++) {
-                operationsPerJob.add(new Operation(jobTimes.get(i)[j], jobMachines.get(i)[j], jobCount, operationCount));
+                operationsPerJob.add(new Operation(beforeEndTime, jobTimes.get(i)[j], jobMachines.get(i)[j], jobCount, operationCount));
                 operationCount++;
+                beforeEndTime += jobTimes.get(i)[j];
             }
             jobs.add(new Job(jobCount, operationsPerJob));
             jobCount++;

@@ -2,7 +2,7 @@ package logic.graph;
 
 import logic.instances.Job;
 import logic.instances.Operation;
-import logic.instances.taillard.TaillardInstance;
+import logic.instances.Instance;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class ConstraintGraph extends GraphImpl<Operation> {
 
-    private TaillardInstance instance;
+    private Instance instance;
 
     private Operation source;
     private Operation end;
@@ -19,7 +19,7 @@ public class ConstraintGraph extends GraphImpl<Operation> {
     private static final int SOURCE_VALUE = Integer.MIN_VALUE;
     private static final int DESTINATION_VALUE = Integer.MAX_VALUE;
 
-    public ConstraintGraph(TaillardInstance ins){
+    public ConstraintGraph(Instance ins){
         super();
         this.instance = ins;
 

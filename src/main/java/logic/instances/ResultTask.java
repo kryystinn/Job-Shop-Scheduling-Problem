@@ -8,11 +8,37 @@ public class ResultTask {
     private long startTime;
     private long endTime;
     private int nMachine;
+    private int nJob;
 
-    public ResultTask(long processingTime, long startTime, long endTime, int nMachine) {
+    public ResultTask(long processingTime, long startTime, long endTime, int nMachine, int nJob) {
         this.processingTime = processingTime;
         this.startTime = startTime;
         this.endTime = endTime;
         this.nMachine = nMachine;
+        this.nJob = nJob;
+    }
+
+    public int getnJob() {
+        return nJob;
+    }
+
+    public int getnMachine() {
+        return nMachine;
+    }
+
+    public long getEndTime() {
+        return endTime;
+    }
+
+    public long getStartTime() {
+        return startTime;
+    }
+
+    public long getProcessingTime() {
+        return processingTime;
+    }
+
+    public String toString() {
+        return getnJob() + " " + getnMachine() + "\t" +  "PT: " + getProcessingTime() + " ST: " + getStartTime() + " ET: " + getEndTime() + "\t\t";
     }
 }

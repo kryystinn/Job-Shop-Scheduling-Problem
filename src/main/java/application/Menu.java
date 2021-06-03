@@ -17,12 +17,13 @@ public class Menu {
 
     public static void main(String args[]){
 //        fileName = Console.readString("Please, load a Taillard file with txt extension");
-        fileName = "C:\\Users\\christine\\Desktop\\taillard\\tai15x15-1.txt";
+        fileName = "C:\\Users\\christine\\Desktop\\taillard\\tai02x06-1.txt";
+//        fileName = Menu.class.getClassLoader().getResource("tai02x06-2.txt").getPath();
         try {
             service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
-            TaillardInstance ins = service.getData(fileName);
-            scheduler = new ScheduleInstance(new GTAlgorithm());
-            scheduler.executeAlgorithm(ins);
+            Instance ins = service.getData(fileName);
+            scheduler = new ScheduleInstance(new GTAlgorithm(ins));
+            scheduler.executeAlgorithm();
         } catch (Exception e) {
             e.printStackTrace();
         }
