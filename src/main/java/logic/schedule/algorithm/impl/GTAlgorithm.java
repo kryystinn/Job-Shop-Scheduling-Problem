@@ -6,6 +6,7 @@ import logic.instances.*;
 import logic.instances.taillard.TaillardInstance;
 import logic.schedule.algorithm.ScheduleAlgorithm;
 import logic.schedule.rules.Rule;
+import logic.schedule.rules.impl.LPTRule;
 import logic.schedule.rules.impl.SPTRule;
 
 import java.util.ArrayList;
@@ -37,32 +38,48 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     @Override
     public List<ResultTask> run() throws AlgorithmException {
         results = new ArrayList<ResultTask>();
+
+        // Inicializar el set A
         initializeASet();
 
-        while (!setA.isEmpty()){
+        while (!setA.isEmpty()) {
+
+            // Determinar operación con menor tiempo de fin (operación prima)
             Operation oPrime = getOPrimeOperation();
+            // Construir el conjunto B
             initializeBSet(oPrime);
+            // Elegir mediante una regla de prioridad la tarea a planificar del conjunto B
             Operation oStar = getOStarOperation();
 
-            //System.out.println(oStar);
 
-            // Planificar
+            // Planificar la tarea
             // TODO: se puede hacer con IN_EDGES mirando el mayor de las operaciones relacionadas
+
+            // Coge el valor de tiempo en el que podrá comenzar la operación seleccionada
             long newInitialTime = this.getLastEndTimeScheduled(oStar);
+            // Se planifica: se cambia el tiempo inicial de la operación y se pone isScheduled a true
             oStar.scheduleOperation(newInitialTime);
+            // Se añade a la lista de operaciones planificadas
             this.addResult(oStar);
 
+            // Se modifica el tiempo de inicio de todas aquellas operaciones no planificadas que vayan a continuación
+            // de la tarea que se acaba de planificar (es decir, aquellas que compartan máquina o que sean sucesoras
+            // de la misma.
             for (Operation operation : constraintGraph.getOutEdges(oStar)) {
                 if(!operation.isScheduled() && operation.getInitialTime() < oStar.getEndTime()) {
                     operation.setInitialTime(oStar.getEndTime());
                 }
             }
 
+            // Se elimina del conjunto A la tarea recién planificada
             setA.remove(oStar);
-            Optional<Operation> nextOperation = constraintGraph.getOutEdges(oStar).stream().filter(x -> x.getJobNumber() == oStar.getJobNumber()).findFirst();
-            if(nextOperation.isPresent()) {
-                setA = new ArrayList<Operation>(setA);
-                setA.add(nextOperation.get());
+
+            // Se añade al conjunto A la operación sucesora, en caso de que exista
+            for (Operation op: constraintGraph.getOutEdges(oStar)) {
+                if (op.getJobNumber() == oStar.getJobNumber()){
+                    setA = new ArrayList<Operation>(setA);
+                    setA.add(op);
+                }
             }
         }
 
@@ -72,6 +89,9 @@ public class GTAlgorithm implements ScheduleAlgorithm {
         return results;
     }
 
+    /**
+     * Inicialización del conjunto A con las primeras operaciones sin planificar de cada trabajo
+     */
     private void initializeASet(){
         setA = new ArrayList<Operation>();
 
@@ -86,9 +106,14 @@ public class GTAlgorithm implements ScheduleAlgorithm {
         }
     }
 
+    /**
+     * Selecciona la operación del conjunto A con menor tiempo de fin
+     * @return la operación con menor tiempo de fin, que se denominará oPrime
+     */
     private Operation getOPrimeOperation() {
         if (setA.isEmpty())
             return null;
+
         // Determina la operación con menor tiempo de fin (C)
         Operation opConMenorTiempoFin = setA.get(0);
         for (Operation op: setA) {
@@ -96,10 +121,14 @@ public class GTAlgorithm implements ScheduleAlgorithm {
                 opConMenorTiempoFin = op;
             }
         }
-        //System.out.println(opConMenorTiempoFin.getInitialTime() + " " + opConMenorTiempoFin.getProcessingTime() + " " + opConMenorTiempoFin.getEndTime());
+
         return opConMenorTiempoFin;
     }
 
+    /**
+     * Selecciona del conjunto A aquellas operaciones que puedan comenzar antes que o prima y que requieran la misma máquina que ella. Como mínimo, el conjunto B tendrá la operación o prima.
+     * @param oPrime, la operación con menor tiempo de fin del conjunto A
+     */
     private void initializeBSet(Operation oPrime) {
         setB = new ArrayList<Operation>();
 
@@ -113,10 +142,22 @@ public class GTAlgorithm implements ScheduleAlgorithm {
         }
     }
 
+    /**
+     * Elige la operación a planificar del conjunto B en función de la regla de prioridad deseada
+     * @return la operación elegida a planificar
+     */
     private Operation getOStarOperation() {
         return rule.run(setB);
     }
 
+    /**
+     * Recorre la lista de tareas planificadas y comprueba el tiempo de fin de aquellas que coincidan con la máquina de
+     * la tarea a planificar o que sean del mismo trabajo que esta. Se queda con el mayor valor, que será
+     * aquel a partir del cual la operación a planificar (o Star) podrá comenzar
+     *
+     * @param operación a planificar
+     * @return el valor de tiempo a partir del cual puede comenzar la operación
+     */
     private long getLastEndTimeScheduled(Operation op) {
         long lastEndTime = 0;
         for(ResultTask scheduledRt : results) {

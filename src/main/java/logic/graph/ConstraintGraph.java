@@ -28,16 +28,16 @@ public class ConstraintGraph extends GraphImpl<Operation> {
     }
 
     private void createGraph(){
-        // initial and destionation nodes
+        // nodo estado inicial y final
         source = new Operation(SOURCE_VALUE);
         end = new Operation(DESTINATION_VALUE);
         this.addNode(source);
         this.addNode(end);
 
-        // add operations and job edges
+        // añadir operaciones y relaciones entre trabajos
         this.createOperations();
 
-        // diccionario con las máquinas y los edges relacionando los nodos con máquinas en común
+        // diccionario con las máquinas y los edges relacionando aquellos nodos con máquinas en común
         this.createMatchingOperationsMachines();
     }
 
