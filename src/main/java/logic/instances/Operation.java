@@ -7,7 +7,7 @@ public class Operation {
     private int jobNumber;
 
     private long processingTime;
-    private long initialTime;
+    private long startingTime;
     private boolean isScheduled;
 
     public Operation(int value) {
@@ -15,7 +15,7 @@ public class Operation {
         this.machineNumber = value;
         this.jobNumber = value;
         this.operationNumber = value;
-        this.initialTime = value;
+        this.startingTime = value;
         this.isScheduled = false;
     }
 
@@ -24,7 +24,7 @@ public class Operation {
         this.machineNumber = nMachine;
         this.jobNumber = jobNumber;
         this.operationNumber = operationNumber;
-        this.initialTime = initialTime;
+        this.startingTime = initialTime;
         this.isScheduled = false;
     }
 
@@ -48,21 +48,21 @@ public class Operation {
         return this.isScheduled;
     }
 
-    public long getInitialTime() {
-        return this.initialTime;
+    public long getStartingTime() {
+        return this.startingTime;
     }
 
     public long getEndTime() {
-        return this.initialTime + this.processingTime;
+        return this.startingTime + this.processingTime;
     }
 
     public void scheduleOperation(long newInitialTime) {
-        this.initialTime = newInitialTime;
+        this.startingTime = newInitialTime;
         this.isScheduled = true;
     }
 
-    public void setInitialTime(long newInitialTime) {
-        this.initialTime = newInitialTime;
+    public void setStartingTime(long newInitialTime) {
+        this.startingTime = newInitialTime;
     }
 
     public String toString() {

@@ -3,16 +3,11 @@ package logic.schedule.algorithm.impl;
 import logic.exceptions.AlgorithmException;
 import logic.graph.ConstraintGraph;
 import logic.instances.*;
-import logic.instances.taillard.TaillardInstance;
 import logic.schedule.algorithm.ScheduleAlgorithm;
 import logic.schedule.rules.Rule;
-import logic.schedule.rules.impl.LPTRule;
 import logic.schedule.rules.impl.SPTRule;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.*;
 
 public class GTAlgorithm implements ScheduleAlgorithm {
 
@@ -66,8 +61,8 @@ public class GTAlgorithm implements ScheduleAlgorithm {
             // de la tarea que se acaba de planificar (es decir, aquellas que compartan máquina o que sean sucesoras
             // de la misma.
             for (Operation operation : constraintGraph.getOutEdges(oStar)) {
-                if(!operation.isScheduled() && operation.getInitialTime() < oStar.getEndTime()) {
-                    operation.setInitialTime(oStar.getEndTime());
+                if(!operation.isScheduled() && operation.getStartingTime() < oStar.getEndTime()) {
+                    operation.setStartingTime(oStar.getEndTime());
                 }
             }
 
@@ -85,6 +80,8 @@ public class GTAlgorithm implements ScheduleAlgorithm {
 
         for (ResultTask rt: results)
             System.out.println(rt.toString());
+
+        System.out.println(calculateLowBound());
 
         return results;
     }
@@ -136,7 +133,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
         long endTime = oPrime.getEndTime();
 
         for(Operation op : setA) {
-            if(op.getMachineNumber() == nMachine && op.getInitialTime() < endTime) {
+            if(op.getMachineNumber() == nMachine && op.getStartingTime() < endTime) {
                 setB.add(op);
             }
         }
@@ -155,7 +152,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
      * la tarea a planificar o que sean del mismo trabajo que esta. Se queda con el mayor valor, que será
      * aquel a partir del cual la operación a planificar (o Star) podrá comenzar
      *
-     * @param operación a planificar
+     * @param op a planificar
      * @return el valor de tiempo a partir del cual puede comenzar la operación
      */
     private long getLastEndTimeScheduled(Operation op) {
@@ -171,7 +168,32 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     }
 
     private void addResult(Operation op) {
-        ResultTask result = new ResultTask(op.getProcessingTime(), op.getInitialTime(), op.getEndTime(), op.getMachineNumber(), op.getJobNumber());
+        ResultTask result = new ResultTask(op.getProcessingTime(), op.getStartingTime(), op.getEndTime(), op.getMachineNumber(), op.getJobNumber());
         results.add(result);
     }
+
+    private long calculateLowBound(){
+        Map<Integer, Long> map = new HashMap<Integer, Long>();
+        for (ResultTask rt: results) {
+            long sum = 0;
+            if(!map.containsKey(rt.getnMachine())) {
+                map.put(rt.getnMachine(), rt.getProcessingTime());
+            }
+            sum = map.get(rt.getnMachine()) + rt.getProcessingTime();
+            map.put(rt.getnMachine(), sum);
+        }
+
+        Iterator it = map.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry)it.next();
+            System.out.println(pair.getKey() + " = " + pair.getValue());
+        }
+
+
+        Long minValue = map.entrySet().stream().max(Map.Entry.comparingByValue()).get().getValue();
+
+
+        return minValue;
+    }
+
 }

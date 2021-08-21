@@ -20,10 +20,10 @@ public class Menu {
 
     public static void main(String args[]) throws URISyntaxException {
 //        fileName = Console.readString("Please, load a Taillard file with txt extension");
-//        fileName = "C:\\Users\\christine\\Desktop\\taillard\\tai02x06-1.txt";
-//        fileName = Menu.class.getClassLoader().getResource("tai02x06-2.txt").getPath();
+//        fileName = "C:\\Users\\christine\\Desktop\\taillard\\tai02x03.txt";
+//        fileName = Menu.class.getClassLoader().getResource("tai02x03.txt").getPath();
 
-        String path = Paths.get("target\\classes\\tai02x06-2.txt").toAbsolutePath().toString();
+        String path = Paths.get("src\\main\\resources\\tai20x15\\tai20x15-9.txt").toAbsolutePath().toString();
 //        String path = Paths.get("target\\classes\\tai15x15-1.txt").toAbsolutePath().toString();
 
         try {
