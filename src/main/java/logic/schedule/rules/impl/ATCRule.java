@@ -7,8 +7,15 @@ import java.util.List;
 
 public class ATCRule implements Rule {
 
+    private int jobWeight;
+
     @Override
     public Operation run(List<Operation> operations) {
+
+
+
+
+
         return null;
     }
 }

@@ -14,6 +14,11 @@ public class TaillardInstance extends Instance {
     private int lowerBound;
     private List<Job> jobs;
 
+    public TaillardInstance(int nJobs, int nMachines, List<Job> jobs) {
+        super(nJobs, nMachines);
+        this.jobs = jobs;
+    }
+
     public TaillardInstance(int nJobs, int nMachines, int timeSeed, int machineSeed, int upperBound, int lowerBound, List<Job> jobs) {
         super(nJobs, nMachines);
         this.timeSeed = timeSeed;

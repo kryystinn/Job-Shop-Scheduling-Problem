@@ -4,7 +4,7 @@ public class Operation {
 
     private int operationNumber;
     private int machineNumber;
-    private int jobNumber;
+    private int jobId;
 
     private long processingTime;
     private long startingTime;
@@ -13,20 +13,21 @@ public class Operation {
     public Operation(int value) {
         this.processingTime = value;
         this.machineNumber = value;
-        this.jobNumber = value;
+        this.jobId = value;
         this.operationNumber = value;
         this.startingTime = value;
         this.isScheduled = false;
     }
 
-    public Operation(int initialTime, int processingTime, int nMachine, int jobNumber, int operationNumber) {
+    public Operation(int initialTime, int processingTime, int nMachine, int jobId, int operationNumber) {
         this.processingTime = processingTime;
         this.machineNumber = nMachine;
-        this.jobNumber = jobNumber;
+        this.jobId = jobId;
         this.operationNumber = operationNumber;
         this.startingTime = initialTime;
         this.isScheduled = false;
     }
+
 
     public long getProcessingTime() {
         return this.processingTime;
@@ -36,8 +37,8 @@ public class Operation {
         return this.operationNumber;
     }
 
-    public int getJobNumber() {
-        return this.jobNumber;
+    public int getJobId() {
+        return this.jobId;
     }
 
     public int getMachineNumber() {

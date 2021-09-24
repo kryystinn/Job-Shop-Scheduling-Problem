@@ -5,6 +5,7 @@ import logic.graph.ConstraintGraph;
 import logic.instances.*;
 import logic.schedule.algorithm.ScheduleAlgorithm;
 import logic.schedule.rules.Rule;
+import logic.schedule.rules.impl.EDDRule;
 import logic.schedule.rules.impl.SPTRule;
 
 import java.util.*;
@@ -21,7 +22,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     private List<ResultTask> results;
 
     public GTAlgorithm(Instance instance) {
-        this(instance, new SPTRule());
+        this(instance, new EDDRule(instance.getJobs()));
     }
 
     public GTAlgorithm(Instance instance, Rule rule) {
@@ -71,15 +72,15 @@ public class GTAlgorithm implements ScheduleAlgorithm {
 
             // Se añade al conjunto A la operación sucesora, en caso de que exista
             for (Operation op: constraintGraph.getOutEdges(oStar)) {
-                if (op.getJobNumber() == oStar.getJobNumber()){
+                if (op.getJobId() == oStar.getJobId()){
                     setA = new ArrayList<Operation>(setA);
                     setA.add(op);
                 }
             }
         }
 
-        for (ResultTask rt: results)
-            System.out.println(rt.toString());
+        //for (ResultTask rt: results)
+        //    System.out.println(rt.toString());
 
         System.out.println(calculateLowBound());
 
@@ -113,12 +114,14 @@ public class GTAlgorithm implements ScheduleAlgorithm {
 
         // Determina la operación con menor tiempo de fin (C)
         Operation opConMenorTiempoFin = setA.get(0);
+        System.out.println("SET A");
         for (Operation op: setA) {
+            System.out.print("op: " + op.getProcessingTime() + " " + op.getEndTime() + "\t");
             if (op.getEndTime() < opConMenorTiempoFin.getEndTime()){
                 opConMenorTiempoFin = op;
             }
         }
-
+        System.out.println("\nop PRIMA: " + opConMenorTiempoFin.getProcessingTime() + "\n");
         return opConMenorTiempoFin;
     }
 
@@ -158,7 +161,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     private long getLastEndTimeScheduled(Operation op) {
         long lastEndTime = 0;
         for(ResultTask scheduledRt : results) {
-            if(scheduledRt.getnMachine() == op.getMachineNumber() || scheduledRt.getnJob() == op.getJobNumber()) {
+            if(scheduledRt.getnMachine() == op.getMachineNumber() || scheduledRt.getnJob() == op.getJobId()) {
                 if(scheduledRt.getEndTime() > lastEndTime) {
                     lastEndTime = scheduledRt.getEndTime();
                 }
@@ -168,8 +171,9 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     }
 
     private void addResult(Operation op) {
-        ResultTask result = new ResultTask(op.getProcessingTime(), op.getStartingTime(), op.getEndTime(), op.getMachineNumber(), op.getJobNumber());
+        ResultTask result = new ResultTask(op.getProcessingTime(), op.getStartingTime(), op.getEndTime(), op.getMachineNumber(), op.getJobId());
         results.add(result);
+        System.out.println(result.toString()+"\n");
     }
 
     private long calculateLowBound(){

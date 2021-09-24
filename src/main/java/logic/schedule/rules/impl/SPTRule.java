@@ -6,7 +6,9 @@ import logic.schedule.rules.Rule;
 import java.util.List;
 
 public class SPTRule implements Rule {
-    public Operation run(List<Operation> operations){
+
+    public Operation run(List<Operation> operations) {
+
         if(operations.isEmpty())  return null;
         // no debería llegar una lista vacía o null
         Operation shortestProcessTime = operations.get(0);

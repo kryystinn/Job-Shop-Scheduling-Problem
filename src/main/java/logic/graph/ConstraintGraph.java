@@ -69,7 +69,7 @@ public class ConstraintGraph extends GraphImpl<Operation> {
         for(Job job : instance.getJobs()) {
             for (Operation op : job.getOperations()) {
                 for(Operation opMach : machineOperations.get(op.getMachineNumber())) {
-                    if (op.getJobNumber() != opMach.getJobNumber()) {
+                    if (op.getJobId() != opMach.getJobId()) {
                         addEdge(op, opMach);
                     }
                 }
