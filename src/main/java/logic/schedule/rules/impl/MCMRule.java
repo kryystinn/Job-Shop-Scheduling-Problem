@@ -5,22 +5,20 @@ import logic.schedule.rules.Rule;
 
 import java.util.List;
 
-public class SPTRule implements Rule {
-
+public class MCMRule implements Rule {
 
     public Operation run(List<Operation> operations) {
 
         if(operations.isEmpty())  return null;
         // no debería llegar una lista vacía o null
-        Operation shortestProcessTime = operations.get(0);
+
+        Operation minCompTime = operations.get(0);
         for (Operation o :operations) {
-            if (shortestProcessTime.getProcessingTime() > o.getProcessingTime()){
-                shortestProcessTime = o;
+            if (minCompTime.getStartingTime() + minCompTime.getProcessingTime() > o.getStartingTime() + o.getProcessingTime()){
+                minCompTime = o;
             }
-            // qué pasa si tienen el mismo processing time ???
         }
 
-        return shortestProcessTime;
+        return minCompTime;
     }
-
 }

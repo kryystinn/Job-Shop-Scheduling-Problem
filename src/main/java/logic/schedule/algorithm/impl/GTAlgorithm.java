@@ -6,6 +6,7 @@ import logic.instances.*;
 import logic.schedule.algorithm.ScheduleAlgorithm;
 import logic.schedule.rules.Rule;
 import logic.schedule.rules.impl.EDDRule;
+import logic.schedule.rules.impl.MCMRule;
 import logic.schedule.rules.impl.SPTRule;
 
 import java.util.*;
@@ -22,7 +23,8 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     private List<ResultTask> results;
 
     public GTAlgorithm(Instance instance) {
-        this(instance, new EDDRule(instance.getJobs()));
+        //this(instance, new EDDRule(instance.getJobs()));
+        this(instance, new MCMRule());
     }
 
     public GTAlgorithm(Instance instance, Rule rule) {
