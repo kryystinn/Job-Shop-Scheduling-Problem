@@ -12,6 +12,8 @@ import logic.parser.impl.TaillardExtendedFileImpl;
 import logic.parser.impl.TaillardFileImpl;
 import logic.schedule.ScheduleInstance;
 import logic.schedule.algorithm.impl.GTAlgorithm;
+import logic.schedule.rules.Rule;
+import logic.schedule.rules.impl.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -33,7 +35,7 @@ public class Menu {
                 "\n0 - Exit\n1 - Taillard\n2 - Taillard extended (with weights and due dates)" +
                 "\nPlease, type only the number");
 
-        if (instanceType == 0 || instanceType > 2) {
+        if (instanceType == 0 || instanceType > 2 || instanceType < 0) {
             System.exit(0);
         }
 
@@ -48,20 +50,57 @@ public class Menu {
             throw new ParserException("Error related to the file path.");
         }
 
-
+        int rule = 0;
         switch (instanceType) {
             case 1:
+                rule = Console.readInt("\nWhat rule are you willing to apply?\nPlease, type only the number." +
+                        "\n1 - SPT (Shortest Processing Time)\n2 - LPT (Longest Processing Time)" +
+                        "\n3 - MCM (Minimum Completion Time)");
+                if (rule == 0 || rule > 3 || rule < 0) {
+                    System.exit(0);
+                }
                 service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
                 break;
 
             case 2:
+                rule = Console.readInt("\nWhat rule are you willing to apply?\nPlease, type only the number." +
+                        "\n1 - SPT (Shortest Processing Time)\n2 - LPT (Longest Processing Time)" +
+                        "\n3 - MCM (Minimum Completion Time)\n4 - EDD (Earliest Due Date)" +
+                        "\n5 - ATC (Apparent Tardiness Cost)");
+                if (rule == 0 || rule > 6 || rule < 0) {
+                    System.exit(0);
+                }
                 service = new FileDataImpl<TaillardInstance>(new TaillardExtendedFileImpl());
                 break;
         }
 
         try {
             Instance ins = service.getData(filePath);
-            scheduler = new ScheduleInstance(new GTAlgorithm(ins));
+
+            Rule ruleToApply = null;
+            switch (rule) {
+                case 1:
+                    ruleToApply = new SPTRule();
+                    break;
+
+                case 2:
+                    ruleToApply = new LPTRule();
+                    break;
+
+                case 3:
+                    ruleToApply = new MCMRule();
+                    break;
+
+                case 4:
+                    ruleToApply = new EDDRule(ins.getJobs());
+                    break;
+
+                case 5:
+                    ruleToApply = new ATCRule(ins.getJobs());
+                    break;
+            }
+
+            scheduler = new ScheduleInstance(new GTAlgorithm(ins, ruleToApply));
             scheduler.executeAlgorithm();
         } catch (Exception e) {
             throw new AlgorithmException("The file instance does not match the instance type selected.");
