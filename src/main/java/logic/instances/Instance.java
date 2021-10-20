@@ -10,10 +10,12 @@ public abstract class Instance {
     private int nJobs;
     private int nMachines;
     private List<Machine> machines;
+    private int totalProcessingTime;
 
-    public Instance(int nJobs, int nMach){
+    public Instance(int nJobs, int nMach, int totalProcTime){
         this.nJobs = nJobs;
         this.nMachines = nMach;
+        this.totalProcessingTime = totalProcTime;
         createMachines();
     }
 
@@ -27,11 +29,15 @@ public abstract class Instance {
     }
 
     public int getnJobs(){
-        return nJobs;
+        return this.nJobs;
     }
 
     public int getnMachines(){
-        return nMachines;
+        return this.nMachines;
+    }
+
+    public int getTotalProcessingTime() {
+        return this.totalProcessingTime;
     }
 
     public List<Machine> getMachines(){

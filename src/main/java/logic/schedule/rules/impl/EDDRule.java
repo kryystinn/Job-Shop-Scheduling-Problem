@@ -1,5 +1,6 @@
 package logic.schedule.rules.impl;
 
+import logic.instances.Instance;
 import logic.instances.Job;
 import logic.instances.Operation;
 import logic.schedule.rules.Rule;
@@ -12,8 +13,8 @@ public class EDDRule implements Rule {
 
     private static final int HIGH_VALUE = Integer.MAX_VALUE;
 
-     public EDDRule(List<Job> jobs){
-        this.jobs = jobs;
+     public EDDRule(Instance instance){
+        this.jobs = instance.getJobs();
     }
 
     public Operation run(List<Operation> operations){
@@ -22,9 +23,9 @@ public class EDDRule implements Rule {
 
         int opJobHasEarliestDueDate = HIGH_VALUE;
         Operation opToSchedule = operations.get(0);
-        System.out.println("SET B");
+        //System.out.println("SET B");
         for (Operation op: operations) {
-            System.out.print("op: " + op.getProcessingTime() + " " + op.getEndTime() + "\t");
+            //System.out.print("op: " + op.getProcessingTime() + " " + op.getEndTime() + "\t");
             for (Job j: jobs) {
                 if (op.getJobId() == j.getJobId()) {
                     if (j.getDueDate() < opJobHasEarliestDueDate){

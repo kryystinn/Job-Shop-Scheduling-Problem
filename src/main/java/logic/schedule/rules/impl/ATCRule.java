@@ -1,5 +1,6 @@
 package logic.schedule.rules.impl;
 
+import logic.instances.Instance;
 import logic.instances.Job;
 import logic.instances.Operation;
 import logic.schedule.rules.Rule;
@@ -15,12 +16,12 @@ public class ATCRule implements Rule {
     private Rule auxRule;
     private HashMap<Operation, Double> priorities;
 
-    public ATCRule(List<Job> jobs) {
-        this(jobs, 1, new EDDRule(jobs));
+    public ATCRule(Instance instance) {
+        this(instance, 1, new EDDRule(instance));
     }
 
-    public ATCRule(List<Job> jobs, double kValue, Rule auxRule) {
-        this.jobs = jobs;
+    public ATCRule(Instance instance, double kValue, Rule auxRule) {
+        this.jobs = instance.getJobs();
         this.kValue = kValue;
         this.auxRule = auxRule;
     }
@@ -30,6 +31,7 @@ public class ATCRule implements Rule {
 
         priorities = new HashMap<>();
 
+        // coger los pesos y las due dates de los jobs a los que pertenecen las operaciones del set B
         for (Operation op : operations) {
             for (Job j : jobs) {
                 if (op.getJobId() == j.getJobId()) {
@@ -38,6 +40,7 @@ public class ATCRule implements Rule {
 
                     double priority = function(op, weight, dueDate);
 
+                    // se guardan las operaciones junto con su prioridad (double)
                     priorities.put(op,priority);
 
                 }
@@ -45,7 +48,9 @@ public class ATCRule implements Rule {
 
         }
 
+        // se saca el entry con MAYOR prioridad de todas
         Map.Entry<Operation, Double> opMaxPriority = maxUsingIteration(priorities);
+        // si se da que todas son 0 o indeterminaciones se pasa a la ordenación por una regla auxiliar such as EDD
         if (opMaxPriority == null || opMaxPriority.getValue() == 0) {
             return auxRule.run(operations);
         }
@@ -53,17 +58,32 @@ public class ATCRule implements Rule {
         return opMaxPriority.getKey();
     }
 
+
+    // función que calcula la prioridad (la fórmula itself de la atc) de cada job
     private double function(Operation op, double weight, int dueDate) {
 
-        double weightedTardiness = weight; // weight * ( max(Completion time of job - Due date of job, 0) )
+        // Get the completion time of the job:
+        long startingTime = op.getStartingTime();
         long processingTime = op.getProcessingTime();
+        long completionTime = dueDate - startingTime - processingTime;
 
+        // Get the tardiness of the job:
+        long tardiness = Math.max(completionTime - dueDate, 0);
 
+        // Then get the tardiness weight:
+        double weightedTardiness = weight * tardiness;
+
+        // Then get the base:
+        double base = weightedTardiness / processingTime;
+
+        // Then get the exponent:
 
 
         return 0;
     }
 
+
+    // coge
     private <K, V extends Comparable<V>> Map.Entry<K,V> maxUsingIteration(Map<K, V> map) {
         Map.Entry<K, V> maxEntry = null;
         for (Map.Entry<K, V> entry : map.entrySet()) {

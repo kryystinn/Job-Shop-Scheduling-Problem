@@ -39,6 +39,7 @@ public class ResultTask {
     }
 
     public String toString() {
-        return getnJob() + " " + getnMachine() + "\t" +  "Processing Time: " + getProcessingTime() + " Start Time: " + getStartTime() + " End Time: " + getEndTime() + "\t\t";
+        return "Job id: " + getnJob() + " Machine id: " + getnMachine() + " " +  "Processing Time: " +
+                getProcessingTime() + " Start Time: " + getStartTime() + " End Time: " + getEndTime();
     }
 }
