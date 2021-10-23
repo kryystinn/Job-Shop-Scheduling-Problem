@@ -77,9 +77,16 @@ public class ATCRule implements Rule {
         double base = weightedTardiness / processingTime;
 
         // Then get the exponent:
+        long numerador = Math.max(completionTime, 0);
+        double denominador = kValue * getAvgProcessingTime();
+
+        double exp = - numerador / denominador;
 
 
-        return 0;
+        // Get the base + exp
+        double priority = Math.pow(base, exp);
+
+        return priority;
     }
 
 
@@ -95,26 +102,24 @@ public class ATCRule implements Rule {
         return maxEntry == null ? null: maxEntry;
     }
 
-    private double getProcessingTimeAverage() {
+    private double getAvgProcessingTime() {
 
         long totalProcessingTime = 0;
         int countNotScheduled = 0;
 
         for (Job j: jobs) {
             int auxProcessingTime = 0;
-            for (Operation o: j.getOperations()) {
-
+            for (int i = j.getOperations().size() - 1; i >= 0; i--) {
+                Operation o = j.getOperations().get(i);
                 if (!o.isScheduled()) {
                     auxProcessingTime += o.getProcessingTime();
+                    countNotScheduled++;
                 }
-
+                else {
+                    break;
+                }
             }
-
-            if (auxProcessingTime != 0) {
-                countNotScheduled++;
-                totalProcessingTime += auxProcessingTime;
-            }
-
+            totalProcessingTime += auxProcessingTime;
         }
 
         return totalProcessingTime / countNotScheduled;
