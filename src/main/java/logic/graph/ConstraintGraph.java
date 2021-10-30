@@ -34,7 +34,7 @@ public class ConstraintGraph extends GraphImpl<Operation> {
         this.addNode(source);
         this.addNode(end);
 
-        // añadir operaciones y relaciones entre trabajos
+        // añadir operaciones y relaciones entre operaciones
         this.createOperations();
 
         // diccionario con las máquinas y los edges relacionando aquellos nodos con máquinas en común
@@ -54,7 +54,6 @@ public class ConstraintGraph extends GraphImpl<Operation> {
     }
 
     private void createMatchingOperationsMachines(){
-        int nMachines = instance.getnMachines();
         Map<Integer, List<Operation>> machineOperations = new HashMap<Integer, List<Operation>>();
 
         for(Job job : instance.getJobs()) {

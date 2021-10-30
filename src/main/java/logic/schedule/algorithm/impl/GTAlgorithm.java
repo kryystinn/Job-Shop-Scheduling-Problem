@@ -54,6 +54,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
             // Planificar la tarea
             // TODO: se puede hacer con IN_EDGES mirando el mayor de las operaciones relacionadas
 
+
             // Coge el valor de tiempo en el que podrá comenzar la operación seleccionada
             long newInitialTime = this.getLastEndTimeScheduled(oStar);
             // Se planifica: se cambia el tiempo inicial de la operación y se pone isScheduled a true
@@ -115,13 +116,13 @@ public class GTAlgorithm implements ScheduleAlgorithm {
 
         // Determina la operación con menor tiempo de fin (C)
         Operation opConMenorTiempoFin = setA.get(0);
-        //System.out.println("SET A");
+
         for (Operation op: setA) {
             if (op.getEndTime() < opConMenorTiempoFin.getEndTime()){
                 opConMenorTiempoFin = op;
             }
         }
-        //System.out.println("\nop PRIMA: " + opConMenorTiempoFin.getProcessingTime() + "\n");
+
         return opConMenorTiempoFin;
     }
 
@@ -151,21 +152,21 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     }
 
     /**
-     * Recorre la lista de tareas planificadas y comprueba el tiempo de fin de aquellas que coincidan con la máquina de
-     * la tarea a planificar o que sean del mismo trabajo que esta. Se queda con el mayor valor, que será
-     * aquel a partir del cual la operación a planificar (o Star) podrá comenzar
+     * Recorre la lista de tareas que tienen una arista hacia la tarea a planificar, es decir, si tienen la misma
+     * máquina o bien es la tarea precedente al mismo (del mismo trabajo),
+     * comprueba que se traten de tareas planificadas y comprueba los tiempos de fin de cada una de ellas.
+     * Se queda con el mayor valor, que será aquel a partir del cual la operación a planificar (o Star) podrá comenzar.
      *
      * @param op a planificar
      * @return el valor de tiempo a partir del cual puede comenzar la operación
      */
     private long getLastEndTimeScheduled(Operation op) {
         long lastEndTime = 0;
-        for(ResultTask scheduledRt : results) {
-            if(scheduledRt.getnMachine() == op.getMachineNumber() || scheduledRt.getnJob() == op.getJobId()) {
-                if(scheduledRt.getEndTime() > lastEndTime) {
-                    lastEndTime = scheduledRt.getEndTime();
+        for(Operation scheduledOp : constraintGraph.getInEdges(op)) {
+                if(scheduledOp.isScheduled() && scheduledOp.getEndTime() > lastEndTime) {
+                    lastEndTime = scheduledOp.getEndTime();
                 }
-            }
+
         }
         return lastEndTime;
     }

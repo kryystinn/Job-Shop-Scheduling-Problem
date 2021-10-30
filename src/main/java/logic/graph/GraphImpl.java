@@ -52,12 +52,20 @@ public class GraphImpl<T> implements Graph<T> {
     @Override
     public List<T> getOutEdges(T node) {
         return nodes.get(node);
+
     }
 
-    // TODO
-    //@Override
-    //public List<T> getInEdges(T node) {
-    //    return null;
-    //}
+
+    @Override
+    public List<T> getInEdges(T node) {
+    List<T> incomingEdges = new ArrayList<T>();
+        for (T n: nodes.keySet()) {
+            if (hasEdge(n, node)){
+                incomingEdges.add(n);
+            }
+        }
+
+        return incomingEdges;
+    }
 
 }

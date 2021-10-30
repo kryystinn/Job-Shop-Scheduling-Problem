@@ -13,5 +13,5 @@ public interface Graph<T> {
 
     List<T> getOutEdges(T node);
 
-    //List<T> getInEdges(T node);
+    List<T> getInEdges(T node);
 }
