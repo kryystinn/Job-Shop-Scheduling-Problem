@@ -5,6 +5,7 @@ import logic.instances.Job;
 import logic.instances.Operation;
 import logic.schedule.rules.Rule;
 
+import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,8 +17,10 @@ public class ATCRule implements Rule {
     private Rule auxRule;
     private HashMap<Operation, Double> priorities;
 
+    private static DecimalFormat df = new DecimalFormat("0.00");
+
     public ATCRule(Instance instance) {
-        this(instance, 1, new EDDRule(instance));
+        this(instance, 0.5, new EDDRule(instance));
     }
 
     public ATCRule(Instance instance, double kValue, Rule auxRule) {
@@ -65,27 +68,27 @@ public class ATCRule implements Rule {
         // Get the completion time of the job:
         long startingTime = op.getStartingTime();
         long processingTime = op.getProcessingTime();
-        long completionTime = dueDate - startingTime - processingTime;
 
-        // Get the tardiness of the job:
-        long tardiness = Math.max(completionTime - dueDate, 0);
-
-        // Then get the tardiness weight:
-        double weightedTardiness = weight * tardiness;
 
         // Then get the base:
-        double base = weightedTardiness / processingTime;
+        double base = weight / processingTime;
+        String baseString = df.format(base);
+
+        baseString = baseString.replace(',','.');
+
+        base = Double.valueOf(baseString);
 
         // Then get the exponent:
-        long numerador = Math.max(completionTime, 0);
+        long numerador = Math.max(dueDate - processingTime - startingTime, 0);
         double denominador = kValue * getAvgProcessingTime();
 
         double exp = - numerador / denominador;
 
 
         // Get the base + exp
-        double priority = Math.pow(base, exp);
-
+        double priority = Double.valueOf(base * Math.exp(exp));
+        System.out.println(weight + "/" + processingTime + " " + "exp(" + numerador + " / " + denominador + ") = " + priority);
+        //System.out.println(base + "exp(" + exp + ") = " + priority);
         return priority;
     }
 
@@ -121,8 +124,9 @@ public class ATCRule implements Rule {
             }
             totalProcessingTime += auxProcessingTime;
         }
+        double avgPt = totalProcessingTime / countNotScheduled;
 
-        return totalProcessingTime / countNotScheduled;
+        return avgPt;
 
     }
 
