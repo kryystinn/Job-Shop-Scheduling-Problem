@@ -2,12 +2,21 @@ package logic.graph;
 
 import java.util.HashSet;
 
+/**
+ * Clase Node que representa un nodo de un grafo.
+ *
+ * @author Cristina Ruiz de Bucesta Crespo
+ *
+ */
 public class Node<T> {
 
     private T key;
-    private HashSet<Node> outEdges;
-    private HashSet<Node> inEdges;
 
+    /**
+     * Constructor de la clase {@link Node}.
+     *
+     * @param key tipo de nodo a crear
+     */
     public Node(T key){
         this.key = key;
     }

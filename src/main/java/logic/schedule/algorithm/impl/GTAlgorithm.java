@@ -3,12 +3,8 @@ package logic.schedule.algorithm.impl;
 import logic.exceptions.AlgorithmException;
 import logic.graph.ConstraintGraph;
 import logic.instances.*;
-import logic.instances.taillard.TaillardInstance;
 import logic.schedule.algorithm.ScheduleAlgorithm;
 import logic.schedule.rules.Rule;
-import logic.schedule.rules.impl.ATCRule;
-import logic.schedule.rules.impl.EDDRule;
-import logic.schedule.rules.impl.MCMRule;
 import logic.schedule.rules.impl.SPTRule;
 
 import java.util.*;
@@ -66,8 +62,8 @@ public class GTAlgorithm implements ScheduleAlgorithm {
             // de la tarea que se acaba de planificar (es decir, aquellas que compartan máquina o que sean sucesoras
             // de la misma.
             for (Operation operation : constraintGraph.getOutEdges(oStar)) {
-                if(!operation.isScheduled() && operation.getStartingTime() < oStar.getEndTime()) {
-                    operation.setStartingTime(oStar.getEndTime());
+                if(!operation.isScheduled() && operation.getStartTime() < oStar.getEndTime()) {
+                    operation.setStartTime(oStar.getEndTime());
                 }
             }
 
@@ -137,7 +133,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
         long endTime = oPrime.getEndTime();
 
         for(Operation op : setA) {
-            if(op.getMachineNumber() == nMachine && op.getStartingTime() < endTime) {
+            if(op.getMachineNumber() == nMachine && op.getStartTime() < endTime) {
                 setB.add(op);
             }
         }
@@ -172,7 +168,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     }
 
     private void addResult(Operation op) {
-        ResultTask result = new ResultTask(op.getProcessingTime(), op.getStartingTime(), op.getEndTime(), op.getMachineNumber(), op.getJobId());
+        ResultTask result = new ResultTask(op.getProcessingTime(), op.getStartTime(), op.getEndTime(), op.getMachineNumber(), op.getJobId());
         results.add(result);
         System.out.println(result.toString()+"\n");
     }

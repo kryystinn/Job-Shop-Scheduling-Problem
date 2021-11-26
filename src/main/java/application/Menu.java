@@ -7,7 +7,6 @@ import logic.instances.Instance;
 import logic.instances.taillard.TaillardInstance;
 import logic.parser.FileData;
 import logic.parser.impl.FileDataImpl;
-import logic.parser.impl.FileParserImpl;
 import logic.parser.impl.TaillardExtendedFileImpl;
 import logic.parser.impl.TaillardFileImpl;
 import logic.schedule.ScheduleInstance;
@@ -16,11 +15,7 @@ import logic.schedule.rules.Rule;
 import logic.schedule.rules.impl.*;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Paths;
 
 public class Menu {
 

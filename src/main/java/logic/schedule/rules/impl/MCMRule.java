@@ -14,7 +14,7 @@ public class MCMRule implements Rule {
 
         Operation minCompTime = operations.get(0);
         for (Operation o :operations) {
-            if (minCompTime.getStartingTime() + minCompTime.getProcessingTime() > o.getStartingTime() + o.getProcessingTime()){
+            if (minCompTime.getStartTime() + minCompTime.getProcessingTime() > o.getStartTime() + o.getProcessingTime()){
                 minCompTime = o;
             }
         }

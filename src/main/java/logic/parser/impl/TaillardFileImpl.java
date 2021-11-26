@@ -3,19 +3,48 @@ package logic.parser.impl;
 import logic.instances.Job;
 import logic.instances.Operation;
 import logic.instances.taillard.TaillardInstance;
-
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Clase TaillardFileImpl encargada de crear Instancias de Taillard.
+ *
+ * @author Cristina Ruiz de Bucesta Crespo
+ *
+ */
 public class TaillardFileImpl extends FileParserImpl<TaillardInstance> {
 
+    /**
+     * Constructor de la clase {@link TaillardFileImpl}
+     *
+     */
     public TaillardFileImpl() {
     }
 
+
+    /**
+     * Devuelve una instancia de Taillard que crea en función de unos datos que se le pasan a través de un txt, el
+     * cual tiene que tener los datos de la forma:
+     *
+     * Nb of jobs, Nb of Machines, Time seed, Machine seed, Upper bound, Lower bound
+     * [nJobs] [nMachines] [timeSeed] [machineSeed] [upperBound] [lowerBound]
+     * Times
+     * [pTimeJ1Op1] [pTimeJ1Op2] [pTimeJ1Op3] ...
+     * [pTimeJ2Op1] [pTimeJ2Op2] [pTimeJ2Op3] ...
+     * ...
+     *
+     * Machines
+     * [machineJ1Op1] [machineJ1Op2] [machineeJ1Op3] ...
+     * [machineJ2Op1] [machineJ2Op2] [machineeJ2Op3] ...
+     * ...
+     *
+     * @param data datos del fichero en cuestión
+     * @return {@link TaillardInstance}
+     */
     public TaillardInstance parseFile(String data) {
         String[] lines = data.split("\n");
 
-        // first line of info (which would be second line of input)
+        // First line of info
         String secondLine = lines[1];
         secondLine = secondLine.replaceAll(" +"," ").trim();
 

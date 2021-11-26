@@ -66,7 +66,7 @@ public class ATCRule implements Rule {
     private double function(Operation op, double weight, int dueDate) {
 
         // Get the completion time of the job:
-        long startingTime = op.getStartingTime();
+        long startingTime = op.getStartTime();
         long processingTime = op.getProcessingTime();
 
 
