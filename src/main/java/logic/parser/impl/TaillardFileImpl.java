@@ -102,8 +102,6 @@ public class TaillardFileImpl extends FileParserImpl<TaillardInstance> {
             jobCount++;
         }
 
-        System.out.println(totalProcessingTime);
-
         return new TaillardInstance(nJobs, nMachines, timeSeed, machineSeed, upperBound, lowerBound, jobs, totalProcessingTime);
     }
 

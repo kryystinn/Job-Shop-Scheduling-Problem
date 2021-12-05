@@ -7,6 +7,7 @@ package logic.instances;
  *
  */
 public class ResultTask {
+
     private long processingTime;
     private long startTime;
     private long endTime;
@@ -79,5 +80,9 @@ public class ResultTask {
     public String toString() {
         return "Job id: " + getJobId() + " Machine id: " + getnMachine() + " " +  "Processing Time: " +
                 getProcessingTime() + " Start Time: " + getStartTime() + " End Time: " + getEndTime();
+    }
+
+    public String toStringStartTimes(){
+        return "" + getStartTime();
     }
 }

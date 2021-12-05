@@ -1,7 +1,9 @@
 package logic.output;
 
+import java.util.List;
+
 public interface Writer {
 
-    public void write(String filename);
+    public void write(List<String[]> data, String outputFileName);
 
 }

@@ -8,4 +8,6 @@ import java.util.List;
 public interface ScheduleAlgorithm {
 
     public List<ResultTask> run() throws AlgorithmException;
+
+    public void writeOutput(String name);
 }

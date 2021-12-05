@@ -15,7 +15,7 @@ public class Node<T> {
     /**
      * Constructor de la clase {@link Node}.
      *
-     * @param key tipo de nodo a crear
+     * @param key nodo o vértice a crear
      */
     public Node(T key){
         this.key = key;

@@ -21,6 +21,7 @@ public class Menu {
 
     private static String fileName;
     private static String filePath;
+    private static String outputName;
     private static FileData<Instance> service;
     private static ScheduleInstance scheduler;
 
@@ -42,6 +43,9 @@ public class Menu {
                     "\nExample: <fileExample.txt> (without the <> symbols)");
             URL path = Menu.class.getResource(fileName);
             filePath = new File(path.getFile()).getPath();
+
+            outputName = fileName.substring(0, fileName.lastIndexOf('.'));
+
         } catch (Exception e) {
             throw new ParserException("Error related to the file path.");
         }
@@ -108,6 +112,7 @@ public class Menu {
         try {
             scheduler = new ScheduleInstance(new GTAlgorithm(ins, ruleToApply));
             scheduler.executeAlgorithm();
+            scheduler.generateOutput(outputName);
         } catch (Exception e) {
             throw new AlgorithmException("Error in scheduling algorithm.");
         }

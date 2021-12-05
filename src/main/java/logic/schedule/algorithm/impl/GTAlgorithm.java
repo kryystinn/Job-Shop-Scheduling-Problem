@@ -3,6 +3,8 @@ package logic.schedule.algorithm.impl;
 import logic.exceptions.AlgorithmException;
 import logic.graph.ConstraintGraph;
 import logic.instances.*;
+import logic.output.Writer;
+import logic.output.impl.CsvWriterImpl;
 import logic.schedule.algorithm.ScheduleAlgorithm;
 import logic.schedule.rules.Rule;
 import logic.schedule.rules.impl.SPTRule;
@@ -14,17 +16,16 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     private Instance inst;
     private Rule rule;
     private ConstraintGraph constraintGraph;
-
     private List<Operation> setA;
     private List<Operation> setB;
-
     private List<ResultTask> results;
+    private Writer writer;
 
-    public GTAlgorithm(Instance instance) {
+    public GTAlgorithm(Instance instance) throws AlgorithmException {
         this(instance, new SPTRule());
     }
 
-    public GTAlgorithm(Instance instance, Rule rule) {
+    public GTAlgorithm(Instance instance, Rule rule) throws AlgorithmException {
         this.inst = instance;
         this.rule = rule;
         this.constraintGraph = new ConstraintGraph(instance);
@@ -78,9 +79,6 @@ public class GTAlgorithm implements ScheduleAlgorithm {
                 }
             }
         }
-
-        //for (ResultTask rt: results)
-        //    System.out.println(rt.toString());
 
         return results;
     }
@@ -170,8 +168,35 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     private void addResult(Operation op) {
         ResultTask result = new ResultTask(op.getProcessingTime(), op.getStartTime(), op.getEndTime(), op.getMachineNumber(), op.getJobId());
         results.add(result);
-        System.out.println(result.toString()+"\n");
     }
 
+    @Override
+    public void writeOutput(String name) {
+        List<String[]> scheduledJobs = new ArrayList<String[]>();
+
+        for (int i = 1; i <= inst.getnJobs(); i++) {
+            String[] job = new String[inst.getnMachines()];
+            int count = 0;
+
+            for (ResultTask rt: results) {
+                if (i == rt.getJobId()) {
+                    job[count] = rt.toStringStartTimes();
+                    count++;
+                }
+            }
+
+            scheduledJobs.add(job);
+        }
+
+        for (String[] j: scheduledJobs){
+            for (int i = 0; i < j.length; i++)
+                System.out.print(j[i] + " ");
+            System.out.println();
+        }
+
+        writer = new CsvWriterImpl();
+        writer.write(scheduledJobs, name);
+        System.out.println("\nArchivo cvs generado con los resultados.");
+    }
 
 }

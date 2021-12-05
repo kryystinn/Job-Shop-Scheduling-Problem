@@ -1,5 +1,6 @@
 package logic.graph;
 
+import logic.exceptions.AlgorithmException;
 import logic.instances.Job;
 import logic.instances.Operation;
 import logic.instances.Instance;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Clase ConstraintGraph que representa una estructura de un grafo de restricciones.
+ * Clase ConstraintGraph que representa la estructura de un grafo de restricciones.
  *
  * @author Cristina Ruiz de Bucesta Crespo
  *
@@ -28,8 +29,9 @@ public class ConstraintGraph extends GraphImpl<Operation> {
      * Constructor de la clase {@link ConstraintGraph}
      *
      * @param ins instancia para crear a partir de ella el grafo de restricciones
+     * @throws AlgorithmException
      */
-    public ConstraintGraph(Instance ins){
+    public ConstraintGraph(Instance ins) throws AlgorithmException {
         super();
         this.instance = ins;
 
@@ -39,8 +41,9 @@ public class ConstraintGraph extends GraphImpl<Operation> {
     /**
      * Crea el grafo de restricciones a partir de las operaciones y los trabajos de la instancia.
      *
+     * @throws AlgorithmException
      */
-    private void createGraph(){
+    private void createGraph() throws AlgorithmException {
         // Nodo estado inicial y final
         source = new Operation(SOURCE_VALUE);
         end = new Operation(DESTINATION_VALUE);
@@ -58,8 +61,9 @@ public class ConstraintGraph extends GraphImpl<Operation> {
      * Crea las operaciones añadiendo entre una y la siguiente una arista (edge) (del mismo job), siendo la primera
      * unión de todos los nodos con el source y la última de todos los nodos el end.
      *
+     * @throws AlgorithmException
      */
-    private void createOperations() {
+    private void createOperations() throws AlgorithmException {
         for (Job j: instance.getJobs()) {
             // Primer nodo de todos: el source
             Operation before = this.source;
@@ -79,8 +83,9 @@ public class ConstraintGraph extends GraphImpl<Operation> {
      * Seguidamente, recorre todas las operaciones de cada trabajo, añadiendo un arista a todas aquellas operaciones
      * que coincidan en la máquina que tienen asignada para ejecutarse.
      *
+     * @throws AlgorithmException
      */
-    private void createMatchingOperationsMachines() {
+    private void createMatchingOperationsMachines() throws AlgorithmException {
         Map<Integer, List<Operation>> machineOperations = new HashMap<Integer, List<Operation>>();
 
         // Añade al diccionario el número de la máquina junto con una lista de operaciones que han de ejecutarse en
