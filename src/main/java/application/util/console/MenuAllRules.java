@@ -1,11 +1,13 @@
-package application;
+package application.util.console;
 
-import application.util.console.Console;
+import application.Menu;
 import logic.exceptions.AlgorithmException;
 import logic.exceptions.InputException;
 import logic.exceptions.ParserException;
 import logic.instances.Instance;
 import logic.instances.taillard.TaillardInstance;
+import logic.output.Writer;
+import logic.output.impl.ExcelWriterImpl;
 import logic.parser.FileData;
 import logic.parser.impl.FileDataImpl;
 import logic.parser.impl.TaillardExtendedFileImpl;
@@ -19,7 +21,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class Menu {
+public class MenuAllRules {
 
     private static String input;
     private static String filePath;
@@ -30,9 +32,13 @@ public class Menu {
     private static ScheduleInstance scheduler;
 
 
+    private static Writer w = new ExcelWriterImpl();
+
     public static void main(String args[]) throws ParserException {
 
-        // 1. Preguntar qué tipo de instancia: Taillard o extendida.
+        w.writeAllSameSheet("C:\\Users\\christine\\Downloads", "prueba", "a", 2, 33, 1, true);
+        System.exit(0);
+
         int instanceType = Console.readInt("\nWelcome. What type of instance will you want to load?" +
                 "\n0 - Exit\n1 - Taillard\n2 - Extended (with weights and due dates)" +
                 "\nPlease, type only the number");
@@ -41,56 +47,51 @@ public class Menu {
             System.exit(0);
         }
 
-        // 2. Preguntar si es solo un archivo o una carpeta con varios,
-        input = Console.readString("\nPlease, load a Taillard file with txt extension or a directory with all" +
-                "the instances you are willing to execute. Consider that the files must be of the same type. " +
+        String name = Console.readString("\nPlease, load a Taillard file with txt extension or a directory with" +
+                "all the instances you are willing to execute. Consider that the files must be of the same type. " +
                 "\nExample: <C:\\Users\\christine\\Downloads\\fileExample.txt> (without the <> symbols)");
 
-        try {
-            File file = new File(input);
-            int r = chooseRule(instanceType);
-            if (r == 5) {
-                kValue = Console.readDouble("Specify k value [0, 1]: ");
-                if (kValue < 0 || kValue > 1)
-                    throw new InputException("Input k must be between 0 and 1, and a double value.");
-            }
+        input = MenuAllRules.class.getResource(name).getPath();
 
-            if (file.isDirectory()) {
-                File[] filesInFolder = file.listFiles();
+        File file = new File(input);
 
-                for (File f : filesInFolder) {
-                    if (f.isFile()) {
-                        Path path = Paths.get(f.getPath());
-                        filePath = new File(String.valueOf(path)).getPath();
+        if (file.isDirectory()) {
+            File[] filesInFolder = file.listFiles();
+            int rowNum = 2;
+            for (File f : filesInFolder) {
 
-                        String fileName = path.getFileName().toString();
-                        String sheetName = fileName.substring(0, fileName.lastIndexOf('.'));
-                        outputName = file.getName() + " " + r;
-
-                        ins = service.getData(filePath);
-                        execute(path.getParent().toString(), sheetName, r);
-                    }
-                }
-
-            } else {
-                if (file.isFile()){
-                    Path path = Paths.get(input);
+                if (f.isFile()) {
+                    Path path = Paths.get(f.getPath());
                     filePath = new File(String.valueOf(path)).getPath();
 
                     String fileName = path.getFileName().toString();
-                    String sheetName = fileName.substring(0, fileName.lastIndexOf('.'));
-                    outputName = sheetName + " " + r;
+                    String instName = fileName.substring(0, fileName.lastIndexOf('.'));
+                    outputName = file.getName() + " " + "try";
 
                     ins = service.getData(filePath);
-                    execute(path.getParent().toString(), sheetName, r);
+                    //execute(path.getParent().toString(), sheetName, r);
+
+                    rowNum++;
                 }
             }
 
-            System.out.println("\nArchivo xlsx generado con los resultados.\n");
+        } else {
 
-        } catch (Exception e) {
-            throw new ParserException("Probably it already exists some file with the same information or name.");
+            if (file.isFile()){
+                Path path = Paths.get(input);
+                filePath = new File(String.valueOf(path)).getPath();
+
+                String fileName = path.getFileName().toString();
+                String sheetName = fileName.substring(0, fileName.lastIndexOf('.'));
+               // outputName = sheetName + " " + r;
+
+                ins = service.getData(filePath);
+               // execute(path.getParent().toString(), sheetName, r);
+            }
         }
+
+        System.out.println("\nArchivo xlsx generado con los resultados.\n");
+
 
     }
 
@@ -164,3 +165,4 @@ public class Menu {
         }
     }
 }
+

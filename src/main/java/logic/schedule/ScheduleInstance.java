@@ -20,7 +20,7 @@ public class ScheduleInstance {
         return results;
     }
 
-    public void generateOutput(String name) {
-        this.schedulingAlgorithm.writeOutput(name);
+    public void generateOutput(String path, String output, String name) {
+        this.schedulingAlgorithm.writeOutput(path, output, name);
     }
 }

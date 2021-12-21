@@ -23,6 +23,12 @@ public class ATCRule implements Rule {
         this(instance, 0.5, new EDDRule(instance));
     }
 
+    public ATCRule(Instance instance, double kValue) {
+        this.jobs = instance.getJobs();
+        this.kValue = kValue;
+        this.auxRule = new EDDRule(instance);
+    }
+
     public ATCRule(Instance instance, double kValue, Rule auxRule) {
         this.jobs = instance.getJobs();
         this.kValue = kValue;
@@ -87,8 +93,7 @@ public class ATCRule implements Rule {
 
         // Get the base + exp
         double priority = Double.valueOf(base * Math.exp(exp));
-        System.out.println(weight + "/" + processingTime + " " + "exp(" + numerador + " / " + denominador + ") = " + priority);
-        //System.out.println(base + "exp(" + exp + ") = " + priority);
+
         return priority;
     }
 

@@ -4,7 +4,7 @@ import logic.exceptions.AlgorithmException;
 import logic.graph.ConstraintGraph;
 import logic.instances.*;
 import logic.output.Writer;
-import logic.output.impl.CsvWriterImpl;
+import logic.output.impl.ExcelWriterImpl;
 import logic.schedule.algorithm.ScheduleAlgorithm;
 import logic.schedule.rules.Rule;
 import logic.schedule.rules.impl.SPTRule;
@@ -32,7 +32,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     }
 
     @Override
-    public List<ResultTask> run() throws AlgorithmException {
+    public List<ResultTask> run() {
         results = new ArrayList<ResultTask>();
 
         // Inicializar el set A
@@ -171,7 +171,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     }
 
     @Override
-    public void writeOutput(String name) {
+    public void writeOutput(String path, String outputName, String sheetName) {
         List<String[]> scheduledJobs = new ArrayList<String[]>();
 
         for (int i = 1; i <= inst.getnJobs(); i++) {
@@ -193,10 +193,12 @@ public class GTAlgorithm implements ScheduleAlgorithm {
                 System.out.print(j[i] + " ");
             System.out.println();
         }
+        System.out.println();
 
-        writer = new CsvWriterImpl();
-        writer.write(scheduledJobs, name);
-        System.out.println("\nArchivo cvs generado con los resultados.");
+        System.out.println(results.get(results.size() - 1).getEndTime());
+
+        writer = new ExcelWriterImpl();
+        writer.write(path, outputName, sheetName, scheduledJobs);
     }
 
 }
