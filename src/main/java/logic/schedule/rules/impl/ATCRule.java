@@ -88,7 +88,11 @@ public class ATCRule implements Rule {
         long numerador = Math.max(dueDate - processingTime - startingTime, 0);
         double denominador = kValue * getAvgProcessingTime();
 
-        double exp = - numerador / denominador;
+        double exp = 0;
+        if (denominador == 0)
+            exp = 0;
+        else
+            exp = - numerador / denominador;
 
 
         // Get the base + exp
@@ -129,7 +133,13 @@ public class ATCRule implements Rule {
             }
             totalProcessingTime += auxProcessingTime;
         }
-        double avgPt = totalProcessingTime / countNotScheduled;
+
+        double avgPt = -1;
+
+        if (countNotScheduled == 0)
+            avgPt = 0;
+        else
+            avgPt = totalProcessingTime / countNotScheduled;
 
         return avgPt;
 

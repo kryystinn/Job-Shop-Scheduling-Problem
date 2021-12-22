@@ -20,6 +20,8 @@ import logic.schedule.rules.impl.*;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class MenuAllRules {
 
@@ -27,37 +29,45 @@ public class MenuAllRules {
     private static String filePath;
     private static String outputName;
     private static Instance ins;
-    private static double kValue;
+    private static String objFunction;
+    private static List<Rule> rules;
     private static FileData<Instance> service;
     private static ScheduleInstance scheduler;
 
 
     private static Writer w = new ExcelWriterImpl();
 
-    public static void main(String args[]) throws ParserException {
+    public static void main(String args[]) throws ParserException, AlgorithmException, InputException {
 
-        w.writeAllSameSheet("C:\\Users\\christine\\Downloads", "prueba", "a", 2, 33, 1, true);
-        System.exit(0);
+        // input example: m prueba
 
-        int instanceType = Console.readInt("\nWelcome. What type of instance will you want to load?" +
-                "\n0 - Exit\n1 - Taillard\n2 - Extended (with weights and due dates)" +
-                "\nPlease, type only the number");
+        objFunction = args[0];
 
-        if (instanceType == 0 || instanceType > 2 || instanceType < 0) {
+        objFunction = String.valueOf(objFunction);
+
+        if (!objFunction.toLowerCase().equals("m") && !objFunction.toLowerCase().equals("t")) {
             System.exit(0);
         }
 
-        String name = Console.readString("\nPlease, load a Taillard file with txt extension or a directory with" +
-                "all the instances you are willing to execute. Consider that the files must be of the same type. " +
-                "\nExample: <C:\\Users\\christine\\Downloads\\fileExample.txt> (without the <> symbols)");
+        String name = args[1];
+        //input = MenuAllRules.class.getResource(name).getPath();
+        input = name;
 
-        input = MenuAllRules.class.getResource(name).getPath();
+        boolean extended = false;
+        String ext = args[2];
+        if (ext.toLowerCase().equals("e"))
+            extended = true;
+
+        selectInstType(extended);
 
         File file = new File(input);
+
 
         if (file.isDirectory()) {
             File[] filesInFolder = file.listFiles();
             int rowNum = 2;
+            boolean added = false;
+
             for (File f : filesInFolder) {
 
                 if (f.isFile()) {
@@ -66,10 +76,27 @@ public class MenuAllRules {
 
                     String fileName = path.getFileName().toString();
                     String instName = fileName.substring(0, fileName.lastIndexOf('.'));
-                    outputName = file.getName() + " " + "try";
+                    outputName = file.getName();
 
                     ins = service.getData(filePath);
-                    //execute(path.getParent().toString(), sheetName, r);
+
+                    if (!added){
+                        if (objFunction.equals("t")) {
+                            rules.add(new ATCRule(ins, 0));
+                            rules.add(new ATCRule(ins, 0.25));
+                            rules.add(new ATCRule(ins, 0.5));
+                            rules.add(new ATCRule(ins, 1));
+                            rules.add(new EDDRule(ins));
+                        }
+                        added = true;
+                    }
+
+
+                    for (int i = 0; i < rules.size(); i++) {
+                        int colNum = i+2;
+                        execute(path.getParent().toString(), instName, rowNum, colNum, rules.get(i), extended);
+                        ins = service.getData(filePath);
+                    }
 
                     rowNum++;
                 }
@@ -95,73 +122,32 @@ public class MenuAllRules {
 
     }
 
-    private static int chooseRule(int instanceType) throws AlgorithmException {
-        int rule = 0;
+    private static boolean selectInstType(boolean extended) throws AlgorithmException {
+        rules = new ArrayList<Rule>();
+        rules.add(new SPTRule());
+        rules.add(new LPTRule());
+        rules.add(new MCMRule());
         try {
-            switch (instanceType) {
-                case 1:
-                    rule = Console.readInt("\nWhat rule are you willing to apply?\n" +
-                            "\n1 - SPT (Shortest Processing Time)\n2 - LPT (Longest Processing Time)" +
-                            "\n3 - MCM (Minimum Completion Time)\nPlease, type only the number");
-                    if (rule == 0 || rule > 3 || rule < 0) {
-                        System.exit(0);
-                    }
-                    service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
-                    break;
-
-                case 2:
-                    rule = Console.readInt("\nWhat rule are you willing to apply?\n" +
-                            "\n1 - SPT (Shortest Processing Time)\n2 - LPT (Longest Processing Time)" +
-                            "\n3 - MCM (Minimum Completion Time)\n4 - EDD (Earliest Due Date)" +
-                            "\n5 - ATC (Apparent Tardiness Cost)\nPlease, type only the number");
-                    if (rule == 0 || rule > 6 || rule < 0) {
-                        System.exit(0);
-                    }
-                    service = new FileDataImpl<TaillardInstance>(new TaillardExtendedFileImpl());
-                    break;
-            }
+            if (!extended)
+                service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
+            else
+                service = new FileDataImpl<TaillardInstance>(new TaillardExtendedFileImpl());
 
         } catch (Exception e) {
             throw new AlgorithmException("Problem related to file instance.\n" +
                     "Maybe the file instance does not match the instance type selected.");
         }
-
-        return rule;
+        return false;
     }
 
-    private static void execute(String path, String sheetName, int rule) throws InputException,
-            AlgorithmException {
-        Rule ruleToApply = null;
-
-        switch (rule) {
-            case 1:
-                ruleToApply = new SPTRule();
-                break;
-
-            case 2:
-                ruleToApply = new LPTRule();
-                break;
-
-            case 3:
-                ruleToApply = new MCMRule();
-                break;
-
-            case 4:
-                ruleToApply = new EDDRule(ins);
-                break;
-
-            case 5:
-                ruleToApply = new ATCRule(ins, kValue);
-                break;
-        }
-
-
+    private static void execute(String path, String instName, int rowNum, int colNum, Rule rule, boolean ext)
+            throws AlgorithmException {
         try {
-            scheduler = new ScheduleInstance(new GTAlgorithm(ins, ruleToApply));
+            scheduler = new ScheduleInstance(new GTAlgorithm(ins, rule));
             scheduler.executeAlgorithm();
-            scheduler.generateOutput(path, outputName, sheetName);
+            scheduler.generateAllOutput(path, outputName, instName, rowNum, colNum, ext, objFunction);
         } catch (Exception e) {
-            throw new AlgorithmException("Error in scheduling algorithm.");
+            throw new AlgorithmException(e);
         }
     }
 }

@@ -2,7 +2,7 @@ package logic.output.impl;
 
 import logic.output.Writer;
 import logic.schedule.rules.Rule;
-import logic.schedule.rules.impl.*;
+import logic.schedule.rules.impl.SPTRule;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -65,8 +65,8 @@ public class ExcelWriterImpl implements Writer {
     }
 
     @Override
-    public void writeAllSameSheet(String path, String name, String instName, int rowNum, int result, int rule,
-                                  boolean extended) {
+    public void writeAllSameSheet(String path, String name, String instName, int rowNum, int colNum, int nJobs,
+                                  int nMachines, long result, Rule rule, boolean extended, String objFunc) {
 
         File file = null;
         OutputStream fos = null;
@@ -81,9 +81,16 @@ public class ExcelWriterImpl implements Writer {
                 out.mkdir();
             }
 
-            fileName = out + "\\" + name + ".xlsx";
+            fileName = out + "\\" + name + " " + objFunc + ".xlsx";
 
             file = new File(fileName);
+
+            String sheetName = "";
+            if (objFunc.equals("m")) {
+                sheetName = "makespan";
+            } else if (objFunc.equals("t")){
+                sheetName = "tardiness";
+            }
 
             if (file.exists()) {
                 workbook = (XSSFWorkbook) WorkbookFactory.create(new FileInputStream(file));
@@ -91,7 +98,7 @@ public class ExcelWriterImpl implements Writer {
             } else {
                 workbook = new XSSFWorkbook();
 
-                sheet = workbook.createSheet("makespan");
+                sheet = workbook.createSheet(sheetName);
 
                 Row headers = sheet.createRow(0);
 
@@ -101,22 +108,24 @@ public class ExcelWriterImpl implements Writer {
                 cStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 
                 sheet.addMergedRegion(new CellRangeAddress(0, 1, 1, 1));
-                headers.createCell(1).setCellValue("SPT");
+                headers.createCell(1).setCellValue("n x m");
                 sheet.addMergedRegion(new CellRangeAddress(0, 1, 2, 2));
-                headers.createCell(2).setCellValue("LPT");
+                headers.createCell(2).setCellValue("SPT");
                 sheet.addMergedRegion(new CellRangeAddress(0, 1, 3, 3));
-                headers.createCell(3).setCellValue("MCM");
+                headers.createCell(3).setCellValue("LPT");
+                sheet.addMergedRegion(new CellRangeAddress(0, 1, 4, 4));
+                headers.createCell(4).setCellValue("MCM");
 
                 if (extended) {
-                    sheet.addMergedRegion(new CellRangeAddress(0, 1, 4, 4));
-                    headers.createCell(4).setCellValue("EDD");
-                    sheet.addMergedRegion(new CellRangeAddress(0, 0, 5, 9));
+                    sheet.addMergedRegion(new CellRangeAddress(0, 1, 5, 5));
+                    headers.createCell(5).setCellValue("EDD");
+                    sheet.addMergedRegion(new CellRangeAddress(0, 0, 6, 9));
                     Row atcValues = sheet.createRow(1);
-                    headers.createCell(5).setCellValue("ATC");
-                    atcValues.createCell(5).setCellValue(0.25);
-                    atcValues.createCell(6).setCellValue(0.5);
-                    atcValues.createCell(7).setCellValue(0.75);
-                    atcValues.createCell(8).setCellValue(1);
+                    headers.createCell(6).setCellValue("ATC");
+                    atcValues.createCell(6).setCellValue(0.25);
+                    atcValues.createCell(7).setCellValue(0.5);
+                    atcValues.createCell(8).setCellValue(0.75);
+                    atcValues.createCell(9).setCellValue(1);
                 }
 
                 for (Cell c: headers) {
@@ -125,34 +134,15 @@ public class ExcelWriterImpl implements Writer {
 
             }
 
-            Row inst = sheet.createRow(rowNum);
-            inst.createCell(0).setCellValue(instName);
+            sheet = workbook.getSheet(sheetName);
 
-            int colNum;
-            switch (rule) {
-                case 1:
-                    colNum = 1;
-                    break;
-
-                case 2:
-                    colNum = 2;
-                    break;
-
-                case 3:
-                    colNum = 3;
-                    break;
-
-                case 4:
-                    colNum = 4;
-                    break;
-
-                case 5:
-                    colNum = 5;
-                    break;
-
-                default:
-                    throw new IllegalStateException("Unexpected value: " + rule);
+            Row inst = sheet.getRow(rowNum);
+            if (inst == null) {
+                inst = sheet.createRow(rowNum);
+                inst.createCell(0).setCellValue(instName);
+                inst.createCell(1).setCellValue(nJobs + "x" + nMachines);
             }
+
             inst.createCell(colNum).setCellValue(result);
 
             fos = new FileOutputStream(file);
@@ -163,12 +153,5 @@ public class ExcelWriterImpl implements Writer {
             e.printStackTrace();
         }
             }
-
-
-
-
-
-
-
 
 }

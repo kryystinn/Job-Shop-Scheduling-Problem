@@ -166,12 +166,13 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     }
 
     private void addResult(Operation op) {
-        ResultTask result = new ResultTask(op.getProcessingTime(), op.getStartTime(), op.getEndTime(), op.getMachineNumber(), op.getJobId());
+        ResultTask result = new ResultTask(op.getProcessingTime(), op.getStartTime(), op.getEndTime(),
+                op.getMachineNumber(), op.getJobId());
         results.add(result);
     }
 
     @Override
-    public void writeOutput(String path, String outputName, String sheetName) {
+    public void writeOutput(String path, String outputName, String name) {
         List<String[]> scheduledJobs = new ArrayList<String[]>();
 
         for (int i = 1; i <= inst.getnJobs(); i++) {
@@ -184,21 +185,36 @@ public class GTAlgorithm implements ScheduleAlgorithm {
                     count++;
                 }
             }
-
             scheduledJobs.add(job);
         }
-
-        for (String[] j: scheduledJobs){
-            for (int i = 0; i < j.length; i++)
-                System.out.print(j[i] + " ");
-            System.out.println();
-        }
-        System.out.println();
 
         System.out.println(results.get(results.size() - 1).getEndTime());
 
         writer = new ExcelWriterImpl();
-        writer.write(path, outputName, sheetName, scheduledJobs);
+        writer.write(path, outputName, name, scheduledJobs);
+    }
+
+    @Override
+    public void writeAll(String path, String output, String instName, int rowNum, int colNum,
+                         boolean extended, String objFunc) {
+        long result = -1;
+
+        if (objFunc.equals("m")) {
+            result = results.get(results.size() - 1).getEndTime();
+
+        } else if (objFunc.equals("t")) {
+            long tardiness = 0;
+            for (Job j: inst.getJobs()) {
+                long completionTime = j.getOperations().get(j.getOperations().size()-1).getEndTime();
+                long dueDate = j.getDueDate();
+                tardiness += Math.max(0, completionTime - dueDate);
+            }
+            result = tardiness;
+        }
+
+        writer = new ExcelWriterImpl();
+        writer.writeAllSameSheet(path, output, instName, rowNum, colNum, inst.getnJobs(), inst.getnMachines(),
+                result, rule, extended, objFunc);
     }
 
 }

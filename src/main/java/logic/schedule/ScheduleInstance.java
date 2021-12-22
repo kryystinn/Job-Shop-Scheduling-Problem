@@ -3,6 +3,7 @@ package logic.schedule;
 import logic.exceptions.AlgorithmException;
 import logic.instances.ResultTask;
 import logic.schedule.algorithm.ScheduleAlgorithm;
+import logic.schedule.rules.Rule;
 
 import java.util.List;
 
@@ -23,4 +24,10 @@ public class ScheduleInstance {
     public void generateOutput(String path, String output, String name) {
         this.schedulingAlgorithm.writeOutput(path, output, name);
     }
+
+    public void generateAllOutput(String path, String output, String inst, int rowNum, int colNum,
+                                  boolean extended, String objFun){
+        this.schedulingAlgorithm.writeAll(path, output, inst, rowNum, colNum, extended, objFun);
+    }
+
 }

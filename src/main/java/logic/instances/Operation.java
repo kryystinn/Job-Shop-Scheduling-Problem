@@ -136,6 +136,10 @@ public class Operation {
         this.startTime = newInitialTime;
     }
 
+    public void resetOperation() {
+        this.isScheduled = false;
+    }
+
     public String toString() {
         return getProcessingTime() + " " + getMachineNumber() + "\t\t";
     }

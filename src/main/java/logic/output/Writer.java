@@ -8,6 +8,6 @@ public interface Writer {
 
     public void write(String path, String name, String sheetName, List<String[]> data);
 
-    public void writeAllSameSheet(String path, String name, String instName, int rowNum, int result, int rule,
-                                  boolean extended);
+    public void writeAllSameSheet(String path, String name, String instName, int rowNum, int colNum, int nJobs,
+                                  int nMachines, long result, Rule rule,  boolean extended, String objFunc);
 }

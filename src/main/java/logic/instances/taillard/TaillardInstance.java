@@ -2,6 +2,7 @@ package logic.instances.taillard;
 
 import logic.instances.Instance;
 import logic.instances.Job;
+import logic.instances.Operation;
 
 import java.util.List;
 
@@ -63,5 +64,6 @@ public class TaillardInstance extends Instance {
     public List<Job> getJobs() {
         return jobs;
     }
+
 
 }

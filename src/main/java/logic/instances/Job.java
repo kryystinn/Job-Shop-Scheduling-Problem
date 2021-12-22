@@ -36,6 +36,12 @@ public class Job {
         return this.weight;
     }
 
+    public void resetOperations() {
+        for (Operation o: operations) {
+            o.resetOperation();
+        }
+    }
+
     public String toString() {
         return getJobId() + " ";
     }

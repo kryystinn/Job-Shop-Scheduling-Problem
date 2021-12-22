@@ -23,9 +23,7 @@ public class EDDRule implements Rule {
 
         int opJobHasEarliestDueDate = HIGH_VALUE;
         Operation opToSchedule = operations.get(0);
-        //System.out.println("SET B");
         for (Operation op: operations) {
-            //System.out.print("op: " + op.getProcessingTime() + " " + op.getEndTime() + "\t");
             for (Job j: jobs) {
                 if (op.getJobId() == j.getJobId()) {
                     if (j.getDueDate() < opJobHasEarliestDueDate){
@@ -40,7 +38,6 @@ public class EDDRule implements Rule {
                 }
             }
         }
-        System.out.print("\n");
         return opToSchedule;
     }
 
