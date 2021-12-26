@@ -19,7 +19,6 @@ public class Job implements Serializable, Comparable {
     public Job(int id, List<Operation> operations, int dueDate, double weight) {
         this.id = id;
         this.operations =  operations;
-        Collections.sort(this.operations);
         this.dueDate = dueDate;
         this.weight = weight;
     }

@@ -31,7 +31,6 @@ public class TaillardInstance extends Instance {
     public TaillardInstance(int nJobs, int nMachines, List<Job> jobs, int totalProcessingTime) {
         super(nJobs, nMachines, totalProcessingTime, -1);
         this.jobs = jobs;
-        Collections.sort(this.jobs);
     }
 
     /**

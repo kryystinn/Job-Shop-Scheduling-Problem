@@ -140,7 +140,6 @@ public class GTAlgorithm implements ScheduleAlgorithm {
                 setB.add(op);
             }
         }
-        Collections.sort(setB);
     }
 
     /**
@@ -213,7 +212,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     @Override
     public void writeAll(String path, String output, String instName, int rowNum, int colNum,
                          boolean extended, String objFunc) {
-        System.out.println(instName);
+
         long result = -1;
 
         if (objFunc.equals("m")) {
@@ -229,14 +228,11 @@ public class GTAlgorithm implements ScheduleAlgorithm {
             }
             result = tardiness;
 
-            System.out.println(result);
         }
 
         writer = new ExcelWriterImpl();
         writer.writeAllSameSheet(path, output, instName, rowNum, colNum, inst,
                 result, extended, objFunc);
-
-        System.out.println("---------------");
     }
 
 }

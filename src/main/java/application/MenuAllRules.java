@@ -90,10 +90,6 @@ public class MenuAllRules {
                         for (int i = 0; i < rules.size(); i++) {
                             int colNum = i+2;
                             execute(path.getParent().toString(), instName, rowNum, colNum, rules.get(i), extended);
-                            ins = service.getData(filePath);
-                            for (Job j: ins.getJobs()){
-                                j.resetOperations();
-                            }
                         }
 
                         if (objFunction.equals("m") && extended) {
@@ -120,10 +116,6 @@ public class MenuAllRules {
                     for (int i = 0; i < rules.size(); i++) {
                         int colNum = i+2;
                         execute(path.getParent().toString(), instName, 2, colNum, rules.get(i), extended);
-                        ins = service.getData(filePath);
-                        for (Job j: ins.getJobs()){
-                            j.resetOperations();
-                        }
                     }
                 }
             }

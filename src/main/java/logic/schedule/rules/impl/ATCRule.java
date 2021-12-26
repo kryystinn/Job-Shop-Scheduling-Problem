@@ -47,7 +47,6 @@ public class ATCRule implements Rule {
 
     @Override
     public Operation run(List<Operation> operations) {
-        Collections.sort(operations);
 
         // coger los pesos y las due dates de los jobs a los que pertenecen las operaciones del set B
         MaxOperation best = new MaxOperation(null, 0);
