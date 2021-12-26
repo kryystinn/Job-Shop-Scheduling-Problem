@@ -11,7 +11,7 @@ public interface ScheduleAlgorithm {
 
     public List<ResultTask> run() throws AlgorithmException;
 
-    public void writeOutput(String path, String output, String sheet);
+    public void writeStartingTimeMatrix(String path, String output, String sheet);
 
     public void writeAll(String path, String output, String inst, int rowNum, int colNum,
                          boolean extended, String objFun);

@@ -17,7 +17,7 @@ public class SPTRule implements Rule {
             if (shortestProcessTime.getProcessingTime() > o.getProcessingTime()){
                 shortestProcessTime = o;
             }
-            // qué pasa si tienen el mismo processing time ???
+
         }
 
         return shortestProcessTime;

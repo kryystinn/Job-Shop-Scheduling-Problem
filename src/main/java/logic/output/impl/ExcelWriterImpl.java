@@ -1,5 +1,6 @@
 package logic.output.impl;
 
+import logic.instances.Instance;
 import logic.output.Writer;
 import logic.schedule.rules.Rule;
 import logic.schedule.rules.impl.SPTRule;
@@ -20,7 +21,7 @@ public class ExcelWriterImpl implements Writer {
 
 
     @Override
-    public void write(String path, String name, String sheetName, List<String[]> data) {
+    public void writeMatrix(String path, String name, String sheetName, List<String[]> data) {
 
         File file = null;
         OutputStream fos = null;
@@ -65,8 +66,9 @@ public class ExcelWriterImpl implements Writer {
     }
 
     @Override
-    public void writeAllSameSheet(String path, String name, String instName, int rowNum, int colNum, int nJobs,
-                                  int nMachines, long result, Rule rule, boolean extended, String objFunc) {
+    public void writeAllSameSheet(String path, String name, String instName, int rowNum, int colNum, Instance instance,
+                                  long result, boolean extended, String objFunc) {
+
 
         File file = null;
         OutputStream fos = null;
@@ -116,7 +118,7 @@ public class ExcelWriterImpl implements Writer {
                 sheet.addMergedRegion(new CellRangeAddress(0, 1, 4, 4));
                 headers.createCell(4).setCellValue("MCM");
 
-                if (extended) {
+                if (objFunc.equals("t")) {
                     sheet.addMergedRegion(new CellRangeAddress(0, 1, 5, 5));
                     headers.createCell(5).setCellValue("EDD");
                     sheet.addMergedRegion(new CellRangeAddress(0, 0, 6, 9));
@@ -126,6 +128,11 @@ public class ExcelWriterImpl implements Writer {
                     atcValues.createCell(7).setCellValue(0.5);
                     atcValues.createCell(8).setCellValue(0.75);
                     atcValues.createCell(9).setCellValue(1);
+                }
+
+                if (instance.getLowerBound() > 0 && objFunc.equals("m")) {
+                    sheet.addMergedRegion(new CellRangeAddress(0, 1, 5, 5));
+                    headers.createCell(5).setCellValue("Lower Bound");
                 }
 
                 for (Cell c: headers) {
@@ -140,10 +147,16 @@ public class ExcelWriterImpl implements Writer {
             if (inst == null) {
                 inst = sheet.createRow(rowNum);
                 inst.createCell(0).setCellValue(instName);
-                inst.createCell(1).setCellValue(nJobs + "x" + nMachines);
+                inst.createCell(1).setCellValue(instance.getnJobs() + "x" + instance.getnMachines());
             }
 
             inst.createCell(colNum).setCellValue(result);
+
+            if (instance.getLowerBound() > 0 && objFunc.equals("m")) {
+                inst.createCell(5).setCellValue(instance.getLowerBound());
+            }
+
+            sheet.autoSizeColumn(0);
 
             fos = new FileOutputStream(file);
             workbook.write(fos);

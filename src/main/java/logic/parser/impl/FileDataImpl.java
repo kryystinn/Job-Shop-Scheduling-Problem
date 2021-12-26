@@ -6,6 +6,7 @@ import logic.parser.FileParser;
 
 public class FileDataImpl<T> implements FileData {
     private FileParser<T> parser;
+
     public FileDataImpl(FileParser<T> parser) {
         this.parser = parser;
     }

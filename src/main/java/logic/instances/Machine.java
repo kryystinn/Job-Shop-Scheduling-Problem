@@ -1,12 +1,14 @@
 package logic.instances;
 
+import java.io.Serializable;
+
 /**
  * Clase Machine que representa una máquina o recurso.
  *
  * @author Cristina Ruiz de Bucesta Crespo
  *
  */
-public class Machine {
+public class Machine implements Serializable {
 
     private int machineNumber;
     private boolean isBusy;
