@@ -20,7 +20,7 @@ public class CopyObject {
 
 /* Returns a copy of the object, or null if the object cannot be serialized.
  */
-    public static Rule copy(Rule orig) {
+    public static <T extends Serializable> T copy(T orig) {
         Object obj = null;
         try {
             // Write the object out to a byte array
@@ -39,7 +39,7 @@ public class CopyObject {
         } catch (ClassNotFoundException cnfe) {
             cnfe.printStackTrace();
         }
-        return (Rule) obj;
+        return (T) obj;
     }
 
 }

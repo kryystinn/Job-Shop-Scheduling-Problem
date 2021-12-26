@@ -1,5 +1,6 @@
 package logic.schedule.algorithm.impl;
 
+import application.util.console.CopyObject;
 import logic.exceptions.AlgorithmException;
 import logic.graph.ConstraintGraph;
 import logic.instances.*;
@@ -26,13 +27,14 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     }
 
     public GTAlgorithm(Instance instance, Rule rule) throws AlgorithmException {
-        this.inst = instance;
-        this.rule = rule;
-        this.constraintGraph = new ConstraintGraph(instance);
+        this.inst = CopyObject.copy(instance);
+        this.rule = CopyObject.copy(rule);
+        this.constraintGraph = new ConstraintGraph(this.inst);
     }
 
     @Override
     public List<ResultTask> run() {
+
         results = new ArrayList<ResultTask>();
 
         // Inicializar el set A
@@ -211,6 +213,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     @Override
     public void writeAll(String path, String output, String instName, int rowNum, int colNum,
                          boolean extended, String objFunc) {
+        System.out.println(instName);
         long result = -1;
 
         if (objFunc.equals("m")) {
@@ -225,11 +228,15 @@ public class GTAlgorithm implements ScheduleAlgorithm {
                 tardiness += Math.max(0, completionTime - dueDate);
             }
             result = tardiness;
+
+            System.out.println(result);
         }
 
         writer = new ExcelWriterImpl();
         writer.writeAllSameSheet(path, output, instName, rowNum, colNum, inst,
                 result, extended, objFunc);
+
+        System.out.println("---------------");
     }
 
 }

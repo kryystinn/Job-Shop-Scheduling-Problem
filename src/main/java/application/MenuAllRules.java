@@ -169,11 +169,10 @@ public class MenuAllRules {
     private static void execute(String path, String instName, int rowNum, int colNum, Rule rule, boolean ext)
             throws AlgorithmException {
         try {
-            scheduler = new ScheduleInstance(new GTAlgorithm(ins, CopyObject.copy(rule)));
+            scheduler = new ScheduleInstance(new GTAlgorithm(ins, rule));
             scheduler.executeAlgorithm();
             scheduler.generateAllOutput(path, outputName, instName, rowNum, colNum, ext, objFunction);
 
-            System.out.println(" END ");
         } catch (Exception e) {
             throw new AlgorithmException(e);
         }

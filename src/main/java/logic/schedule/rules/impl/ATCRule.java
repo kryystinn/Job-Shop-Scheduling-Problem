@@ -6,9 +6,7 @@ import logic.instances.Operation;
 import logic.schedule.rules.Rule;
 
 import java.text.DecimalFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ATCRule implements Rule {
@@ -36,12 +34,23 @@ public class ATCRule implements Rule {
         this.auxRule = auxRule;
     }
 
+    public class MaxOperation {
+        public double priority;
+        Operation operation;
+
+        MaxOperation(Operation op, double priority) {
+            this.operation = op;
+            this.priority = priority;
+        }
+
+    }
+
     @Override
     public Operation run(List<Operation> operations) {
-
-        priorities = new HashMap<>();
+        Collections.sort(operations);
 
         // coger los pesos y las due dates de los jobs a los que pertenecen las operaciones del set B
+        MaxOperation best = new MaxOperation(null, 0);
         for (Operation op : operations) {
             for (Job j : jobs) {
                 if (op.getJobId() == j.getJobId()) {
@@ -49,23 +58,20 @@ public class ATCRule implements Rule {
                     int dueDate = j.getDueDate();
 
                     double priority = function(op, weight, dueDate);
-
-                    // se guardan las operaciones junto con su prioridad (double)
-                    priorities.put(op,priority);
-
+                    if(priority > best.priority) {
+                        best = new MaxOperation(op, priority);
+                    }
                 }
             }
-
         }
 
-        // se saca el entry con MAYOR prioridad de todas
-        Map.Entry<Operation, Double> opMaxPriority = maxUsingIteration(priorities);
         // si se da que todas son 0 o indeterminaciones se pasa a la ordenación por una regla auxiliar such as EDD
-        if (opMaxPriority == null || opMaxPriority.getValue() == 0) {
+        if (best == null || best.operation == null || best.priority == 0) {
             return auxRule.run(operations);
+            //return operations.size() != 0 ? operations.get(0) : null;
         }
 
-        return opMaxPriority.getKey();
+        return best.operation;
     }
 
 
@@ -106,10 +112,12 @@ public class ATCRule implements Rule {
     }
 
 
-    private <K, V extends Comparable<V>> Map.Entry<K,V> maxUsingIteration(Map<K, V> map) {
+    private <K extends Operation, V extends Comparable<V>> Map.Entry<K,V> maxUsingIteration(Map<K, V> map) {
         Map.Entry<K, V> maxEntry = null;
         for (Map.Entry<K, V> entry : map.entrySet()) {
-            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0) {
+            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0
+                    || entry.getValue().compareTo(maxEntry.getValue()) == 0
+                        && entry.getKey().getOperationNumber() < maxEntry.getKey().getOperationNumber()) {
                 maxEntry = entry;
             }
         }

@@ -2,6 +2,7 @@ package logic.instances;
 
 import logic.exceptions.ParserException;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  * @author Cristina Ruiz de Bucesta Crespo
  *
  */
-public abstract class Instance {
+public abstract class Instance implements Serializable {
 
     private int nJobs;
     private int nMachines;
