@@ -1,12 +1,14 @@
 package logic.instances;
 
+import java.io.Serializable;
+
 /**
  * Clase Operation que representa una operación o tarea de un trabajo.
  *
  * @author Cristina Ruiz de Bucesta Crespo
  *
  */
-public class Operation {
+public class Operation implements Serializable, Comparable {
 
     private int operationNumber;
     private int machineNumber;
@@ -141,7 +143,11 @@ public class Operation {
     }
 
     public String toString() {
-        return getProcessingTime() + " " + getMachineNumber() + "\t\t";
+        return getProcessingTime() + " " + getMachineNumber();
     }
 
+    @Override
+    public int compareTo(Object o) {
+        return this.operationNumber - ((Operation)o).operationNumber;
+    }
 }

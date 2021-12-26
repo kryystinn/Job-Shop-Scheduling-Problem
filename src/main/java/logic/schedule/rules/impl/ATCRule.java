@@ -9,6 +9,7 @@ import java.text.DecimalFormat;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class ATCRule implements Rule {
 
@@ -77,6 +78,9 @@ public class ATCRule implements Rule {
 
 
         // Then get the base:
+        if (processingTime == 0) {
+            return 0;
+        }
         double base = weight / processingTime;
         String baseString = df.format(base);
 
@@ -102,7 +106,6 @@ public class ATCRule implements Rule {
     }
 
 
-    // coge
     private <K, V extends Comparable<V>> Map.Entry<K,V> maxUsingIteration(Map<K, V> map) {
         Map.Entry<K, V> maxEntry = null;
         for (Map.Entry<K, V> entry : map.entrySet()) {

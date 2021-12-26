@@ -5,6 +5,7 @@ import logic.exceptions.AlgorithmException;
 import logic.exceptions.InputException;
 import logic.exceptions.ParserException;
 import logic.instances.Instance;
+import logic.instances.Job;
 import logic.instances.taillard.TaillardInstance;
 import logic.parser.FileData;
 import logic.parser.impl.FileDataImpl;
@@ -69,6 +70,9 @@ public class Menu {
 
                         ins = service.getData(filePath);
                         execute(path.getParent().toString(), sheetName, r);
+                        for (Job j: ins.getJobs()){
+                            j.resetOperations();
+                        }
                     }
                 }
 
@@ -83,6 +87,9 @@ public class Menu {
 
                     ins = service.getData(filePath);
                     execute(path.getParent().toString(), sheetName, r);
+                    for (Job j: ins.getJobs()){
+                        j.resetOperations();
+                    }
                 }
             }
 
@@ -94,7 +101,7 @@ public class Menu {
 
     }
 
-    private static int chooseRule(int instanceType) throws AlgorithmException {
+    private static int chooseRule(int instanceType) throws ParserException {
         int rule = 0;
         try {
             switch (instanceType) {
@@ -121,7 +128,7 @@ public class Menu {
             }
 
         } catch (Exception e) {
-            throw new AlgorithmException("Problem related to file instance.\n" +
+            throw new ParserException("Problem related to file instance.\n" +
                     "Maybe the file instance does not match the instance type selected.");
         }
 

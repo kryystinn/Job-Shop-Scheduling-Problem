@@ -17,6 +17,7 @@ public abstract class Instance {
     private int nMachines;
     private List<Machine> machines;
     private int totalProcessingTime;
+    private int lowerBound;
 
     /**
      * Constructor de la clase {@link Instance}.
@@ -24,11 +25,13 @@ public abstract class Instance {
      * @param nJobs número de trabajos de la instancia
      * @param nMach número de máquinas de la instancia
      * @param totalProcTime tiempo de procesamiento total de todas las tareas que forman la instancia
+     * @param lowerBound cota inferior de la instancia, si no tiene será un valor de -1
      */
-    public Instance(int nJobs, int nMach, int totalProcTime){
+    public Instance(int nJobs, int nMach, int totalProcTime, int lowerBound){
         this.nJobs = nJobs;
         this.nMachines = nMach;
         this.totalProcessingTime = totalProcTime;
+        this.lowerBound = lowerBound;
         createMachines();
     }
 
@@ -71,6 +74,15 @@ public abstract class Instance {
      */
     public int getTotalProcessingTime() {
         return this.totalProcessingTime;
+    }
+
+    /**
+     * Devuelve la cota inferior de la instancia.
+     *
+     * @return {@link #lowerBound}
+     */
+    public int getLowerBound(){
+        return this.lowerBound;
     }
 
     /**

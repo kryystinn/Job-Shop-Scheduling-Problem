@@ -1,12 +1,14 @@
 package logic.instances;
 
+import java.io.Serializable;
+
 /**
  * Clase ResultTask que representa una operación o tarea ya planificada de un trabajo.
  *
  * @author Cristina Ruiz de Bucesta Crespo
  *
  */
-public class ResultTask {
+public class ResultTask implements Serializable {
 
     private long processingTime;
     private long startTime;

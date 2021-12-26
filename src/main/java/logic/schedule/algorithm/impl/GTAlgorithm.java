@@ -127,6 +127,9 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     private void initializeBSet(Operation oPrime) {
         setB = new ArrayList<Operation>();
 
+        if (oPrime.getProcessingTime() == 0)
+            setB.add(oPrime);
+
         int nMachine = oPrime.getMachineNumber();
         long endTime = oPrime.getEndTime();
 
@@ -135,6 +138,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
                 setB.add(op);
             }
         }
+        Collections.sort(setB);
     }
 
     /**
@@ -172,8 +176,10 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     }
 
     @Override
-    public void writeOutput(String path, String outputName, String name) {
+    public void writeStartingTimeMatrix(String path, String outputName, String name) {
         List<String[]> scheduledJobs = new ArrayList<String[]>();
+
+        long result = -1;
 
         for (int i = 1; i <= inst.getnJobs(); i++) {
             String[] job = new String[inst.getnMachines()];
@@ -188,10 +194,18 @@ public class GTAlgorithm implements ScheduleAlgorithm {
             scheduledJobs.add(job);
         }
 
-        System.out.println(results.get(results.size() - 1).getEndTime());
+        long tardiness = 0;
+        for (Job j: inst.getJobs()) {
+            Operation last = j.getOperations().get(j.getOperations().size()-1);
+            long completionTime = last.getEndTime();
+            long dueDate = j.getDueDate();
+            tardiness += Math.max(0, completionTime - dueDate);
+        }
+        result = tardiness;
+        System.out.println(name + "  tardiness: " + result);
 
         writer = new ExcelWriterImpl();
-        writer.write(path, outputName, name, scheduledJobs);
+        writer.writeMatrix(path, outputName, name, scheduledJobs);
     }
 
     @Override
@@ -205,7 +219,8 @@ public class GTAlgorithm implements ScheduleAlgorithm {
         } else if (objFunc.equals("t")) {
             long tardiness = 0;
             for (Job j: inst.getJobs()) {
-                long completionTime = j.getOperations().get(j.getOperations().size()-1).getEndTime();
+                Operation last = j.getOperations().get(j.getOperations().size()-1);
+                long completionTime = last.getEndTime();
                 long dueDate = j.getDueDate();
                 tardiness += Math.max(0, completionTime - dueDate);
             }
@@ -213,8 +228,8 @@ public class GTAlgorithm implements ScheduleAlgorithm {
         }
 
         writer = new ExcelWriterImpl();
-        writer.writeAllSameSheet(path, output, instName, rowNum, colNum, inst.getnJobs(), inst.getnMachines(),
-                result, rule, extended, objFunc);
+        writer.writeAllSameSheet(path, output, instName, rowNum, colNum, inst,
+                result, extended, objFunc);
     }
 
 }
