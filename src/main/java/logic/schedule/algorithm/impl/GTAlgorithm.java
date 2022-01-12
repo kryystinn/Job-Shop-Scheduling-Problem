@@ -51,8 +51,6 @@ public class GTAlgorithm implements ScheduleAlgorithm {
 
 
             // Planificar la tarea
-            // TODO: se puede hacer con IN_EDGES mirando el mayor de las operaciones relacionadas
-
 
             // Coge el valor de tiempo en el que podrá comenzar la operación seleccionada
             long newInitialTime = this.getLastEndTimeScheduled(oStar);
@@ -123,7 +121,8 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     }
 
     /**
-     * Selecciona del conjunto A aquellas operaciones que puedan comenzar antes que o prima y que requieran la misma máquina que ella. Como mínimo, el conjunto B tendrá la operación o prima.
+     * Selecciona del conjunto A aquellas operaciones que puedan comenzar antes que o prima y que requieran la misma
+     * máquina que ella. Como mínimo, el conjunto B tendrá la operación o prima.
      * @param oPrime, la operación con menor tiempo de fin del conjunto A
      */
     private void initializeBSet(Operation oPrime) {
@@ -180,8 +179,6 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     public void writeStartingTimeMatrix(String path, String outputName, String name) {
         List<String[]> scheduledJobs = new ArrayList<String[]>();
 
-        long result = -1;
-
         for (int i = 1; i <= inst.getnJobs(); i++) {
             String[] job = new String[inst.getnMachines()];
             int count = 0;
@@ -194,16 +191,6 @@ public class GTAlgorithm implements ScheduleAlgorithm {
             }
             scheduledJobs.add(job);
         }
-
-        long tardiness = 0;
-        for (Job j: inst.getJobs()) {
-            Operation last = j.getOperations().get(j.getOperations().size()-1);
-            long completionTime = last.getEndTime();
-            long dueDate = j.getDueDate();
-            tardiness += Math.max(0, completionTime - dueDate);
-        }
-        result = tardiness;
-        System.out.println(name + "  tardiness: " + result);
 
         writer = new ExcelWriterImpl();
         writer.writeMatrix(path, outputName, name, scheduledJobs);
@@ -227,7 +214,6 @@ public class GTAlgorithm implements ScheduleAlgorithm {
                 tardiness += Math.max(0, completionTime - dueDate);
             }
             result = tardiness;
-
         }
 
         writer = new ExcelWriterImpl();

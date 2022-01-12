@@ -116,7 +116,7 @@ public class ExcelWriterImpl implements Writer {
                 sheet.addMergedRegion(new CellRangeAddress(0, 1, 3, 3));
                 headers.createCell(3).setCellValue("LPT");
                 sheet.addMergedRegion(new CellRangeAddress(0, 1, 4, 4));
-                headers.createCell(4).setCellValue("MCM");
+                headers.createCell(4).setCellValue("MCT");
 
                 if (objFunc.equals("t")) {
                     sheet.addMergedRegion(new CellRangeAddress(0, 1, 5, 5));
@@ -133,6 +133,8 @@ public class ExcelWriterImpl implements Writer {
                 if (instance.getLowerBound() > 0 && objFunc.equals("m")) {
                     sheet.addMergedRegion(new CellRangeAddress(0, 1, 5, 5));
                     headers.createCell(5).setCellValue("Lower Bound");
+                    sheet.addMergedRegion(new CellRangeAddress(0, 1, 6, 6));
+                    headers.createCell(6).setCellValue("Upper Bound");
                 }
 
                 for (Cell c: headers) {
@@ -154,6 +156,7 @@ public class ExcelWriterImpl implements Writer {
 
             if (instance.getLowerBound() > 0 && objFunc.equals("m")) {
                 inst.createCell(5).setCellValue(instance.getLowerBound());
+                inst.createCell(6).setCellValue(instance.getUpperBound());
             }
 
             sheet.autoSizeColumn(0);

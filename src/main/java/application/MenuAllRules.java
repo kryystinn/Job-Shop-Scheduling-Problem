@@ -1,13 +1,8 @@
 package application;
 
-import application.Menu;
-import application.util.console.CopyObject;
 import logic.exceptions.AlgorithmException;
-import logic.exceptions.InputException;
 import logic.exceptions.ParserException;
 import logic.instances.Instance;
-import logic.instances.Job;
-import logic.instances.Operation;
 import logic.instances.taillard.TaillardInstance;
 import logic.output.Writer;
 import logic.output.impl.ExcelWriterImpl;
@@ -25,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 public class MenuAllRules {
@@ -67,16 +63,20 @@ public class MenuAllRules {
 
         selectInstType(extended);
         rules = new ArrayList<Rule>();
-        File file = new File(input);
 
         try {
+            File file = new File(input);
+
             if (file.isDirectory()) {
+
                 File[] filesInFolder = file.listFiles();
+                Arrays.sort(filesInFolder, Comparator.comparingLong(File::lastModified));
+
                 int rowNum = 2;
 
                 for (int n = 0; n < filesInFolder.length; n++) {
-
                     File f = filesInFolder[n];
+
                     if (f.isFile()) {
                         Path path = Paths.get(f.getPath());
                         filePath = new File(String.valueOf(path)).getPath();
@@ -132,7 +132,7 @@ public class MenuAllRules {
         rules.clear();
         rules.add(new SPTRule());
         rules.add(new LPTRule());
-        rules.add(new MCMRule());
+        rules.add(new MCTRule());
 
         if (objFunction.equals("t")) {
             rules.add(new EDDRule(ins));

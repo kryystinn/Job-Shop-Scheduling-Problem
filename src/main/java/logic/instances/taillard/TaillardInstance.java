@@ -3,7 +3,6 @@ package logic.instances.taillard;
 import logic.instances.Instance;
 import logic.instances.Job;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -29,7 +28,7 @@ public class TaillardInstance extends Instance {
      * @param totalProcessingTime tiempo de procesamiento total de todas las tareas que forman la instancia
      */
     public TaillardInstance(int nJobs, int nMachines, List<Job> jobs, int totalProcessingTime) {
-        super(nJobs, nMachines, totalProcessingTime, -1);
+        super(nJobs, nMachines, totalProcessingTime, -1, -1);
         this.jobs = jobs;
     }
 
@@ -46,7 +45,7 @@ public class TaillardInstance extends Instance {
      * @param totalProcessingTime tiempo de procesamiento total de todas las tareas que forman la instancia
      */
     public TaillardInstance(int nJobs, int nMachines, int timeSeed, int machineSeed, int upperBound, int lowerBound, List<Job> jobs, int totalProcessingTime) {
-        super(nJobs, nMachines, totalProcessingTime, lowerBound);
+        super(nJobs, nMachines, totalProcessingTime, lowerBound, upperBound);
         this.timeSeed = timeSeed;
         this.machineSeed = machineSeed;
         this.upperBound = upperBound;

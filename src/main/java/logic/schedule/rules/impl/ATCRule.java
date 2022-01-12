@@ -7,14 +7,12 @@ import logic.schedule.rules.Rule;
 
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ATCRule implements Rule {
 
     private List<Job> jobs;
     private double kValue;
     private Rule auxRule;
-    private HashMap<Operation, Double> priorities;
 
     private static DecimalFormat df = new DecimalFormat("0.00");
 
@@ -34,8 +32,8 @@ public class ATCRule implements Rule {
         this.auxRule = auxRule;
     }
 
-    public class MaxOperation {
-        public double priority;
+    class MaxOperation {
+        double priority;
         Operation operation;
 
         MaxOperation(Operation op, double priority) {
@@ -52,14 +50,24 @@ public class ATCRule implements Rule {
         MaxOperation best = new MaxOperation(null, 0);
         for (Operation op : operations) {
             for (Job j : jobs) {
+
                 if (op.getJobId() == j.getJobId()) {
                     double weight = j.getWeight();
                     int dueDate = j.getDueDate();
 
                     double priority = function(op, weight, dueDate);
+
                     if(priority > best.priority) {
                         best = new MaxOperation(op, priority);
                     }
+
+                    else if (best.operation != null && priority == best.priority) {
+                        List<Operation> equalPriorities = new ArrayList<>();
+                        equalPriorities.add(op);
+                        equalPriorities.add(best.operation);
+                        auxRule.run(equalPriorities);
+                    }
+
                 }
             }
         }
@@ -67,7 +75,6 @@ public class ATCRule implements Rule {
         // si se da que todas son 0 o indeterminaciones se pasa a la ordenación por una regla auxiliar such as EDD
         if (best == null || best.operation == null || best.priority == 0) {
             return auxRule.run(operations);
-            //return operations.size() != 0 ? operations.get(0) : null;
         }
 
         return best.operation;
@@ -86,18 +93,18 @@ public class ATCRule implements Rule {
         if (processingTime == 0) {
             return 0;
         }
+
         double base = weight / processingTime;
         String baseString = df.format(base);
 
         baseString = baseString.replace(',','.');
-
         base = Double.valueOf(baseString);
 
         // Then get the exponent:
         long numerador = Math.max(dueDate - processingTime - startingTime, 0);
         double denominador = kValue * getAvgProcessingTime();
 
-        double exp = 0;
+        double exp;
         if (denominador == 0)
             exp = 0;
         else
@@ -110,19 +117,6 @@ public class ATCRule implements Rule {
         return priority;
     }
 
-
-    private <K extends Operation, V extends Comparable<V>> Map.Entry<K,V> maxUsingIteration(Map<K, V> map) {
-        Map.Entry<K, V> maxEntry = null;
-        for (Map.Entry<K, V> entry : map.entrySet()) {
-            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0
-                    || entry.getValue().compareTo(maxEntry.getValue()) == 0
-                        && entry.getKey().getOperationNumber() < maxEntry.getKey().getOperationNumber()) {
-                maxEntry = entry;
-            }
-        }
-
-        return maxEntry == null ? null: maxEntry;
-    }
 
     private double getAvgProcessingTime() {
 
@@ -144,7 +138,7 @@ public class ATCRule implements Rule {
             totalProcessingTime += auxProcessingTime;
         }
 
-        double avgPt = -1;
+        double avgPt;
 
         if (countNotScheduled == 0)
             avgPt = 0;

@@ -19,6 +19,7 @@ public abstract class Instance implements Serializable {
     private List<Machine> machines;
     private int totalProcessingTime;
     private int lowerBound;
+    private int upperBound;
 
     /**
      * Constructor de la clase {@link Instance}.
@@ -28,11 +29,12 @@ public abstract class Instance implements Serializable {
      * @param totalProcTime tiempo de procesamiento total de todas las tareas que forman la instancia
      * @param lowerBound cota inferior de la instancia, si no tiene será un valor de -1
      */
-    public Instance(int nJobs, int nMach, int totalProcTime, int lowerBound){
+    public Instance(int nJobs, int nMach, int totalProcTime, int lowerBound, int upperBound){
         this.nJobs = nJobs;
         this.nMachines = nMach;
         this.totalProcessingTime = totalProcTime;
         this.lowerBound = lowerBound;
+        this.upperBound = upperBound;
         createMachines();
     }
 
@@ -84,6 +86,15 @@ public abstract class Instance implements Serializable {
      */
     public int getLowerBound(){
         return this.lowerBound;
+    }
+
+    /**
+     * Devuelve la cota superior de la instancia.
+     *
+     * @return {@link #upperBound}
+     */
+    public int getUpperBound(){
+        return this.upperBound;
     }
 
     /**

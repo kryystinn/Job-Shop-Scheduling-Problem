@@ -149,7 +149,7 @@ public class Menu {
                 break;
 
             case 3:
-                ruleToApply = new MCMRule();
+                ruleToApply = new MCTRule();
                 break;
 
             case 4:
