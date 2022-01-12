@@ -23,11 +23,11 @@ public class MCTRule implements Rule {
         if(operations.isEmpty())  return null;
 
 
-        MaxOperation best = new MaxOperation(null, 0);
+        MaxOperation best = new MaxOperation(null, 0.0);
 
         for (Operation o :operations) {
 
-            double priority = 1 / (o.getStartTime() + o.getProcessingTime());
+            double priority = 1.0 / Double.valueOf(o.getStartTime() + o.getProcessingTime());
 
             if (priority > best.priority) {
                 best = new MaxOperation(o, priority);

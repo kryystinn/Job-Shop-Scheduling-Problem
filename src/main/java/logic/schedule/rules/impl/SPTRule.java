@@ -29,12 +29,14 @@ public class SPTRule implements Rule {
         for (Operation o :operations) {
             if (shortestProcessTime.getProcessingTime() == 0 || o.getProcessingTime() == 0)
                 return shortestProcessTime;
+            else {
+                double prior1 = 1.0 / Double.valueOf(shortestProcessTime.getProcessingTime());
+                double prior2 = 1.0 / Double.valueOf(o.getProcessingTime());
+                if (prior1 < prior2){
+                    shortestProcessTime = o;
+                }
 
-            else if (1/shortestProcessTime.getProcessingTime() < 1/o.getProcessingTime()){
-
-                shortestProcessTime = o;
             }
-
         }
 
         return shortestProcessTime;

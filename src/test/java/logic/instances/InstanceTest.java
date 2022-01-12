@@ -8,9 +8,7 @@ import logic.parser.impl.TaillardFileImpl;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-
 import java.io.File;
-
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class InstanceTest {

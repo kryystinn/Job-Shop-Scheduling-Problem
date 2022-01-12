@@ -6,6 +6,7 @@ import logic.exceptions.InputException;
 import logic.exceptions.ParserException;
 import logic.instances.Instance;
 import logic.instances.Job;
+import logic.instances.ResultTask;
 import logic.instances.taillard.TaillardInstance;
 import logic.parser.FileData;
 import logic.parser.impl.FileDataImpl;
@@ -19,6 +20,7 @@ import logic.schedule.rules.impl.*;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 public class Menu {
 
@@ -164,8 +166,9 @@ public class Menu {
 
         try {
             scheduler = new ScheduleInstance(new GTAlgorithm(ins, ruleToApply));
-            scheduler.executeAlgorithm();
+            List<ResultTask> results = scheduler.executeAlgorithm();
             scheduler.generateOutput(path, outputName, sheetName);
+
         } catch (Exception e) {
             throw new AlgorithmException("Error in scheduling algorithm.");
         }
