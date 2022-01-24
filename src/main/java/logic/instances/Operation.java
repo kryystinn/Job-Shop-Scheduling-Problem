@@ -8,10 +8,10 @@ import java.io.Serializable;
  * @author Cristina Ruiz de Bucesta Crespo
  *
  */
-public class Operation implements Serializable, Comparable {
+public class Operation implements Serializable {
 
-    private int operationNumber;
-    private int machineNumber;
+    private int operationId;
+    private int machineId;
     private int jobId;
 
     private long processingTime;
@@ -27,9 +27,9 @@ public class Operation implements Serializable, Comparable {
      */
     public Operation(int value) {
         this.processingTime = value;
-        this.machineNumber = value;
+        this.machineId = value;
         this.jobId = value;
-        this.operationNumber = value;
+        this.operationId = value;
         this.startTime = value;
         this.isScheduled = false;
     }
@@ -46,9 +46,9 @@ public class Operation implements Serializable, Comparable {
      */
     public Operation(int startTime, int processingTime, int nMachine, int jobId, int operationNumber) {
         this.processingTime = processingTime;
-        this.machineNumber = nMachine;
+        this.machineId = nMachine;
         this.jobId = jobId;
-        this.operationNumber = operationNumber;
+        this.operationId = operationNumber;
         this.startTime = startTime;
         this.isScheduled = false;
     }
@@ -65,10 +65,10 @@ public class Operation implements Serializable, Comparable {
     /**
      * Devuelve el número de identificación de la tarea.
      *
-     * @return {@link #operationNumber}
+     * @return {@link #operationId}
      */
-    public int getOperationNumber() {
-        return this.operationNumber;
+    public int getOperationId() {
+        return this.operationId;
     }
 
     /**
@@ -83,10 +83,10 @@ public class Operation implements Serializable, Comparable {
     /**
      * Devuelve el número de la máquina en la que tiene que ejecutarse la tarea.
      *
-     * @return {@link #machineNumber}
+     * @return {@link #machineId}
      */
-    public int getMachineNumber() {
-        return this.machineNumber;
+    public int getMachineId() {
+        return this.machineId;
     }
 
     /**
@@ -125,29 +125,30 @@ public class Operation implements Serializable, Comparable {
      * @param newInitialTime nuevo tiempo de comienzo de la tarea
      */
     public void scheduleOperation(long newInitialTime) {
-        this.startTime = newInitialTime;
+        setStartTime(newInitialTime);
         this.isScheduled = true;
     }
 
     /**
      * Asigna un nuevo valor de tiempo de comienzo de una tarea {@link #startTime}.
      *
-     * @param newInitialTime nuevo tiempo de comienzo de la tarea
+     * @param newStartTime nuevo tiempo de comienzo de la tarea
      */
-    public void setStartTime(long newInitialTime) {
-        this.startTime = newInitialTime;
+    public void setStartTime(long newStartTime) {
+        this.startTime = newStartTime;
     }
 
+
+    /**
+     * Resetea la operación: pasa {@link #isScheduled} a false.
+     *
+     */
     public void resetOperation() {
         this.isScheduled = false;
     }
 
     public String toString() {
-        return getProcessingTime() + " " + getMachineNumber();
+        return getProcessingTime() + " " + getMachineId();
     }
 
-    @Override
-    public int compareTo(Object o) {
-        return this.operationNumber - ((Operation)o).operationNumber;
-    }
 }

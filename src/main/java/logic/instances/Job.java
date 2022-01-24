@@ -1,23 +1,21 @@
 package logic.instances;
 
 import java.io.Serializable;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
-public class Job implements Serializable, Comparable {
-    private int id;
+public class Job implements Serializable {
+    private int jobId;
     private List<Operation> operations;
     private int dueDate;
     private double weight;
 
     public Job(int id, List<Operation> operations) {
-        this.id = id;
+        this.jobId = id;
         this.operations = operations;
     }
 
     public Job(int id, List<Operation> operations, int dueDate, double weight) {
-        this.id = id;
+        this.jobId = id;
         this.operations =  operations;
         this.dueDate = dueDate;
         this.weight = weight;
@@ -28,7 +26,7 @@ public class Job implements Serializable, Comparable {
     }
 
     public int getJobId() {
-        return id;
+        return jobId;
     }
 
     public int getDueDate() {
@@ -49,8 +47,4 @@ public class Job implements Serializable, Comparable {
         return getJobId() + " ";
     }
 
-    @Override
-    public int compareTo(Object o) {
-        return this.id - ((Job)o).getJobId();
-    }
 }

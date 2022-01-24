@@ -33,14 +33,13 @@ public class ATCRule implements Rule {
     }
 
     class MaxOperation {
-        double priority;
         Operation operation;
+        double priority;
 
         MaxOperation(Operation op, double priority) {
             this.operation = op;
             this.priority = priority;
         }
-
     }
 
     @Override

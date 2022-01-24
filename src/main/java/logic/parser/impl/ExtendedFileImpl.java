@@ -13,13 +13,13 @@ import java.util.List;
  * @author Cristina Ruiz de Bucesta Crespo
  *
  */
-public class TaillardExtendedFileImpl extends FileParserImpl<TaillardInstance> {
+public class ExtendedFileImpl extends FileParserImpl<TaillardInstance> {
 
     /**
-     * Constructor de la clase {@link TaillardExtendedFileImpl}
+     * Constructor de la clase {@link ExtendedFileImpl}
      *
      */
-    public TaillardExtendedFileImpl() {
+    public ExtendedFileImpl() {
     }
 
 

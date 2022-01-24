@@ -21,7 +21,7 @@ public class ExcelWriterImpl implements Writer {
 
 
     @Override
-    public void writeMatrix(String path, String name, String sheetName, List<String[]> data) {
+    public void writeMatrixStartTimes(String path, String name, String sheetName, List<String[]> data) {
 
         File file = null;
         OutputStream fos = null;
@@ -66,8 +66,8 @@ public class ExcelWriterImpl implements Writer {
     }
 
     @Override
-    public void writeAllSameSheet(String path, String name, String instName, int rowNum, int colNum, Instance instance,
-                                  long result, boolean extended, String objFunc) {
+    public void write(String path, String name, String instName, int rowNum, int colNum, Instance instance,
+                      long result, boolean extended, String objFunc) {
 
 
         File file = null;
@@ -115,26 +115,24 @@ public class ExcelWriterImpl implements Writer {
                 headers.createCell(2).setCellValue("SPT");
                 sheet.addMergedRegion(new CellRangeAddress(0, 1, 3, 3));
                 headers.createCell(3).setCellValue("LPT");
-                sheet.addMergedRegion(new CellRangeAddress(0, 1, 4, 4));
-                headers.createCell(4).setCellValue("MCT");
 
                 if (objFunc.equals("t")) {
-                    sheet.addMergedRegion(new CellRangeAddress(0, 1, 5, 5));
-                    headers.createCell(5).setCellValue("EDD");
-                    sheet.addMergedRegion(new CellRangeAddress(0, 0, 6, 9));
+                    sheet.addMergedRegion(new CellRangeAddress(0, 1, 4, 4));
+                    headers.createCell(4).setCellValue("EDD");
+                    sheet.addMergedRegion(new CellRangeAddress(0, 0, 5, 8));
                     Row atcValues = sheet.createRow(1);
-                    headers.createCell(6).setCellValue("ATC");
-                    atcValues.createCell(6).setCellValue(0.25);
-                    atcValues.createCell(7).setCellValue(0.5);
-                    atcValues.createCell(8).setCellValue(0.75);
-                    atcValues.createCell(9).setCellValue(1);
+                    headers.createCell(5).setCellValue("ATC");
+                    atcValues.createCell(5).setCellValue(0.25);
+                    atcValues.createCell(6).setCellValue(0.5);
+                    atcValues.createCell(7).setCellValue(0.75);
+                    atcValues.createCell(8).setCellValue(1);
                 }
 
                 if (instance.getLowerBound() > 0 && objFunc.equals("m")) {
+                    sheet.addMergedRegion(new CellRangeAddress(0, 1, 4, 4));
+                    headers.createCell(4).setCellValue("Lower Bound");
                     sheet.addMergedRegion(new CellRangeAddress(0, 1, 5, 5));
-                    headers.createCell(5).setCellValue("Lower Bound");
-                    sheet.addMergedRegion(new CellRangeAddress(0, 1, 6, 6));
-                    headers.createCell(6).setCellValue("Upper Bound");
+                    headers.createCell(5).setCellValue("Upper Bound");
                 }
 
                 for (Cell c: headers) {
@@ -155,8 +153,8 @@ public class ExcelWriterImpl implements Writer {
             inst.createCell(colNum).setCellValue(result);
 
             if (instance.getLowerBound() > 0 && objFunc.equals("m")) {
-                inst.createCell(5).setCellValue(instance.getLowerBound());
-                inst.createCell(6).setCellValue(instance.getUpperBound());
+                inst.createCell(4).setCellValue(instance.getLowerBound());
+                inst.createCell(5).setCellValue(instance.getUpperBound());
             }
 
             sheet.autoSizeColumn(0);

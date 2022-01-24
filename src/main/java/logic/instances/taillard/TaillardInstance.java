@@ -15,7 +15,6 @@ public class TaillardInstance extends Instance {
 
     private int timeSeed;
     private int machineSeed;
-    private int upperBound;
     private List<Job> jobs;
 
 
@@ -44,11 +43,11 @@ public class TaillardInstance extends Instance {
      * @param jobs listado de trabajos de la istancia
      * @param totalProcessingTime tiempo de procesamiento total de todas las tareas que forman la instancia
      */
-    public TaillardInstance(int nJobs, int nMachines, int timeSeed, int machineSeed, int upperBound, int lowerBound, List<Job> jobs, int totalProcessingTime) {
+    public TaillardInstance(int nJobs, int nMachines, int timeSeed, int machineSeed, int upperBound, int lowerBound,
+                            List<Job> jobs, int totalProcessingTime) {
         super(nJobs, nMachines, totalProcessingTime, lowerBound, upperBound);
         this.timeSeed = timeSeed;
         this.machineSeed = machineSeed;
-        this.upperBound = upperBound;
         this.jobs = jobs;
     }
 

@@ -92,17 +92,17 @@ public class ConstraintGraph extends GraphImpl<Operation> {
         // ella
         for(Job job : instance.getJobs()) {
             for(Operation op : job.getOperations()) {
-                if(!machineOperations.containsKey(op.getMachineNumber())) {
-                    machineOperations.put(op.getMachineNumber(), new ArrayList<Operation>());
+                if(!machineOperations.containsKey(op.getMachineId())) {
+                    machineOperations.put(op.getMachineId(), new ArrayList<Operation>());
                 }
-                machineOperations.get(op.getMachineNumber()).add(op);
+                machineOperations.get(op.getMachineId()).add(op);
             }
         }
 
         // Añadir aristas (edges) entre operaciones que comparten máquina y son
         for(Job job : instance.getJobs()) {
             for (Operation op : job.getOperations()) {
-                for(Operation opMach : machineOperations.get(op.getMachineNumber())) {
+                for(Operation opMach : machineOperations.get(op.getMachineId())) {
                     if (op.getJobId() != opMach.getJobId()) {
                         addEdge(op, opMach);
                     }
@@ -110,5 +110,6 @@ public class ConstraintGraph extends GraphImpl<Operation> {
             }
         }
     }
+
 
 }

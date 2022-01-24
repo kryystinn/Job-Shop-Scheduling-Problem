@@ -21,7 +21,7 @@ public class GraphImpl<T> implements Graph<T> {
      *
      */
     public GraphImpl(){
-        nodes = new HashMap<T, List<T>>();
+        nodes = new HashMap<>();
     }
 
     /**
@@ -34,7 +34,7 @@ public class GraphImpl<T> implements Graph<T> {
             throw new AlgorithmException("Error due to the addition of node to the graph.");
         }
 
-        nodes.put(node, new LinkedList<T>());
+        nodes.put(node, new LinkedList<>());
     }
 
     /**
@@ -107,7 +107,7 @@ public class GraphImpl<T> implements Graph<T> {
      */
     @Override
     public List<T> getInEdges(T node) {
-    List<T> incomingEdges = new ArrayList<T>();
+    List<T> incomingEdges = new ArrayList<>();
         for (T n: nodes.keySet()) {
             if (hasEdge(n, node)){
                 incomingEdges.add(n);

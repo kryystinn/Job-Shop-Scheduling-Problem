@@ -99,12 +99,13 @@ public class TaillardFileImpl extends FileParserImpl<TaillardInstance> {
             // Create jobs and operations
             jobs = new ArrayList<>();
             int jobCount = 1;
-            int operationCount = 0;
             for (int i = 0; i < nJobs; i++) {
+                int operationCount = 0;
                 List<Operation> operationsPerJob = new ArrayList<>();
                 int beforeEndTime = 0;
                 for (int j = 0; j < nMachines; j++) {
-                    operationsPerJob.add(new Operation(beforeEndTime, jobTimes.get(i)[j], jobMachines.get(i)[j], jobCount, operationCount));
+                    operationsPerJob.add(new Operation(beforeEndTime, jobTimes.get(i)[j], jobMachines.get(i)[j],
+                            jobCount, operationCount));
                     operationCount++;
                     beforeEndTime += jobTimes.get(i)[j];
                 }

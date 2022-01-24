@@ -10,9 +10,9 @@ import java.io.Serializable;
  */
 public class Machine implements Serializable {
 
-    private int machineNumber;
+    private int machineId;
+    private long releaseTime;
     private boolean isBusy;
-
 
     /**
      * Constructor de la clase {@link Machine}.
@@ -21,17 +21,19 @@ public class Machine implements Serializable {
      * @param id número identificador de la máquina o recurso
      */
     public Machine(int id){
-        this.machineNumber = id;
-        isBusy = false;
+        this.machineId = id;
+        this.releaseTime = 0;
+        this.isBusy = false;
+
     }
 
     /**
      * Devuelve el número identificador de la máquina.
      *
-     * @return {@link #machineNumber}
+     * @return {@link #machineId}
      */
-    public int getMachineNumber(){
-        return this.machineNumber;
+    public int getMachineId(){
+        return this.machineId;
     }
 
     /**
@@ -43,4 +45,25 @@ public class Machine implements Serializable {
     public boolean isBusy(){
         return this.isBusy;
     }
+
+    /**
+     * Devuelve el tiempo de liberación de la máquina.
+     *
+     * @return {@link #releaseTime}
+     */
+    public long getReleaseTime(){
+        return this.releaseTime;
+    }
+
+    /**
+     * Modifica el tiempo de liberación de la máquina por uno nuevo.
+     *
+     * @param newReleaseTime nuevo tiempo de liberación
+     */
+    public void setReleaseTime(long newReleaseTime) {
+        this.releaseTime = newReleaseTime;
+    }
+
+
+
 }

@@ -31,7 +31,7 @@ public class EDDRule implements Rule {
     /**
      * Método que ejecuta la regla de prioridad. Recibe una lista de operaciones y devuelve aquella que tenga mayor
      * prioridad, calculada como 1/dueDate.
-     * En caso de que las operaciones tengan la misma prioridad eligirá la operación que tenga menor tiempo de
+     * En caso de que las operaciones tengan la misma prioridad elegirá la operación que tenga menor tiempo de
      * ejecución.
      *
      * @param operations lista de operaciones
@@ -48,13 +48,16 @@ public class EDDRule implements Rule {
             for (Job j: jobs) {
                 if (op.getJobId() == j.getJobId()) {
 
-                    if (1/j.getDueDate() > 1/opJobHasEarliestDueDate){
+                    double prior1 = Double.valueOf(1.0 / j.getDueDate());
+                    double prior2 = Double.valueOf(1.0 / opJobHasEarliestDueDate);
+
+                    if (prior1 > prior2){
                         opJobHasEarliestDueDate = j.getDueDate();
                         opToSchedule = op;
 
                     }
 
-                    else if (1/j.getDueDate() == 1/opJobHasEarliestDueDate){
+                    else if (prior1 == prior2){
                         if (op.getProcessingTime() < opToSchedule.getProcessingTime())
                             opToSchedule = op;
                     }

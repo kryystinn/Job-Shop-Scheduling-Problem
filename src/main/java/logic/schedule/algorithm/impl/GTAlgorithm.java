@@ -54,8 +54,17 @@ public class GTAlgorithm implements ScheduleAlgorithm {
 
             // Coge el valor de tiempo en el que podrá comenzar la operación seleccionada
             long newInitialTime = this.getLastEndTimeScheduled(oStar);
-            // Se planifica: se cambia el tiempo inicial de la operación y se pone isScheduled a true
+
+            // Se planifica:
+            // - se cambia el tiempo inicial de la operación
+            // - se pone isScheduled a true
             oStar.scheduleOperation(newInitialTime);
+
+            // Se actualiza el machine release time de la máquina en la que se procesó:
+            //inst.getJobs().get(oStar.getJobId()-1).getOperations().get(oStar.getOperationNumber()-1)
+            // .setMachineReleaseTime(oStar.getEndTime());
+            //inst.getMachines().get(oStar.getMachineNumber()-1).setReleaseTime(oStar.getEndTime());
+
             // Se añade a la lista de operaciones planificadas
             this.addResult(oStar);
 
@@ -63,8 +72,9 @@ public class GTAlgorithm implements ScheduleAlgorithm {
             // de la tarea que se acaba de planificar (es decir, aquellas que compartan máquina o que sean sucesoras
             // de la misma.
             for (Operation operation : constraintGraph.getOutEdges(oStar)) {
-                if(!operation.isScheduled() && operation.getStartTime() < oStar.getEndTime()) {
-                    operation.setStartTime(oStar.getEndTime());
+                if(!operation.isScheduled()) {
+                    if (operation.getStartTime() < oStar.getEndTime())
+                        operation.setStartTime(oStar.getEndTime());
                 }
             }
 
@@ -74,7 +84,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
             // Se añade al conjunto A la operación sucesora, en caso de que exista
             for (Operation op: constraintGraph.getOutEdges(oStar)) {
                 if (op.getJobId() == oStar.getJobId()){
-                    setA = new ArrayList<Operation>(setA);
+                    setA = new ArrayList<>(setA);
                     setA.add(op);
                 }
             }
@@ -131,11 +141,11 @@ public class GTAlgorithm implements ScheduleAlgorithm {
         if (oPrime.getProcessingTime() == 0)
             setB.add(oPrime);
 
-        int nMachine = oPrime.getMachineNumber();
+        int nMachine = oPrime.getMachineId();
         long endTime = oPrime.getEndTime();
 
         for(Operation op : setA) {
-            if(op.getMachineNumber() == nMachine && op.getStartTime() < endTime) {
+            if(op.getMachineId() == nMachine && op.getStartTime() < endTime) {
                 setB.add(op);
             }
         }
@@ -155,7 +165,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
      * comprueba que se traten de tareas planificadas y comprueba los tiempos de fin de cada una de ellas.
      * Se queda con el mayor valor, que será aquel a partir del cual la operación a planificar (o Star) podrá comenzar.
      *
-     * @param op a planificar
+     * @param op operación a planificar
      * @return el valor de tiempo a partir del cual puede comenzar la operación
      */
     private long getLastEndTimeScheduled(Operation op) {
@@ -169,12 +179,25 @@ public class GTAlgorithm implements ScheduleAlgorithm {
         return lastEndTime;
     }
 
+    /**
+     * Crea una nueva tarea resuelta y la añade a la lista de tareas planificadas {@link #results}.
+     *
+     * @param op operación planificada a añadir en la lista
+     */
     private void addResult(Operation op) {
         ResultTask result = new ResultTask(op.getProcessingTime(), op.getStartTime(), op.getEndTime(),
-                op.getMachineNumber(), op.getJobId());
+                op.getMachineId(), op.getJobId());
         results.add(result);
     }
 
+    /**
+     * Obtiene los datos de los startTimes de las tareas planificadas y prepara una lista de String[] en la que
+     * cada array será un trabajo con los datos de cada operación del mismo.
+     *
+     * @param path ruta en la que guardar el fichero
+     * @param outputName nombre de salida del fichero
+     * @param name nombre de la hoja de cálculo
+     */
     @Override
     public void writeStartingTimeMatrix(String path, String outputName, String name) {
         List<String[]> scheduledJobs = new ArrayList<String[]>();
@@ -193,9 +216,21 @@ public class GTAlgorithm implements ScheduleAlgorithm {
         }
 
         writer = new ExcelWriterImpl();
-        writer.writeMatrix(path, outputName, name, scheduledJobs);
+        writer.writeMatrixStartTimes(path, outputName, name, scheduledJobs);
     }
 
+    /**
+     * En función de la función objetivo a analizar obtiene bien el makespan o el tardiness de las instancias
+     * planificadas. Después de esto, los imprime en el fichero Excel.
+     *
+     * @param path ruta en la que guardar el fichero
+     * @param output nombre de salida del fichero
+     * @param instName nombre de la instancia planificada
+     * @param rowNum número de fila (número de instancia dentro del directorio, en caso de haberlo)
+     * @param colNum número de columna (número de regla ejecutada)
+     * @param extended true/false si la instancia es extendida o no, respectivamente
+     * @param objFunc función objetivo a analizar
+     */
     @Override
     public void writeAll(String path, String output, String instName, int rowNum, int colNum,
                          boolean extended, String objFunc) {
@@ -217,7 +252,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
         }
 
         writer = new ExcelWriterImpl();
-        writer.writeAllSameSheet(path, output, instName, rowNum, colNum, inst,
+        writer.write(path, output, instName, rowNum, colNum, inst,
                 result, extended, objFunc);
     }
 

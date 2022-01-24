@@ -6,11 +6,10 @@ import logic.exceptions.InputException;
 import logic.exceptions.ParserException;
 import logic.instances.Instance;
 import logic.instances.Job;
-import logic.instances.ResultTask;
 import logic.instances.taillard.TaillardInstance;
 import logic.parser.FileData;
 import logic.parser.impl.FileDataImpl;
-import logic.parser.impl.TaillardExtendedFileImpl;
+import logic.parser.impl.ExtendedFileImpl;
 import logic.parser.impl.TaillardFileImpl;
 import logic.schedule.ScheduleInstance;
 import logic.schedule.algorithm.impl.GTAlgorithm;
@@ -20,7 +19,6 @@ import logic.schedule.rules.impl.*;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
 
 public class Menu {
 
@@ -109,9 +107,8 @@ public class Menu {
             switch (instanceType) {
                 case 1:
                     rule = Console.readInt("\nWhat rule are you willing to apply?\n" +
-                            "\n1 - SPT (Shortest Processing Time)\n2 - LPT (Longest Processing Time)" +
-                            "\n3 - MCM (Minimum Completion Time)\nPlease, type only the number");
-                    if (rule == 0 || rule > 3 || rule < 0) {
+                            "\n1 - SPT (Shortest Processing Time)\n2 - LPT (Longest Processing Time)");
+                    if (rule == 0 || rule > 2 || rule < 0) {
                         System.exit(0);
                     }
                     service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
@@ -120,12 +117,12 @@ public class Menu {
                 case 2:
                     rule = Console.readInt("\nWhat rule are you willing to apply?\n" +
                             "\n1 - SPT (Shortest Processing Time)\n2 - LPT (Longest Processing Time)" +
-                            "\n3 - MCM (Minimum Completion Time)\n4 - EDD (Earliest Due Date)" +
-                            "\n5 - ATC (Apparent Tardiness Cost)\nPlease, type only the number");
-                    if (rule == 0 || rule > 6 || rule < 0) {
+                            "\n3 - EDD (Earliest Due Date)" +
+                            "\n4 - ATC (Apparent Tardiness Cost)\nPlease, type only the number");
+                    if (rule == 0 || rule > 4 || rule < 0) {
                         System.exit(0);
                     }
-                    service = new FileDataImpl<TaillardInstance>(new TaillardExtendedFileImpl());
+                    service = new FileDataImpl<TaillardInstance>(new ExtendedFileImpl());
                     break;
             }
 
@@ -151,14 +148,10 @@ public class Menu {
                 break;
 
             case 3:
-                ruleToApply = new MCTRule();
-                break;
-
-            case 4:
                 ruleToApply = new EDDRule(ins);
                 break;
 
-            case 5:
+            case 4:
                 ruleToApply = new ATCRule(ins, kValue);
                 break;
         }
@@ -166,7 +159,7 @@ public class Menu {
 
         try {
             scheduler = new ScheduleInstance(new GTAlgorithm(ins, ruleToApply));
-            List<ResultTask> results = scheduler.executeAlgorithm();
+            scheduler.executeAlgorithm();
             scheduler.generateOutput(path, outputName, sheetName);
 
         } catch (Exception e) {

@@ -7,11 +7,10 @@ import logic.instances.Instance;
 import logic.instances.taillard.TaillardInstance;
 import logic.parser.FileData;
 import logic.parser.impl.FileDataImpl;
-import logic.parser.impl.TaillardExtendedFileImpl;
+import logic.parser.impl.ExtendedFileImpl;
 import logic.parser.impl.TaillardFileImpl;
 import logic.schedule.ScheduleInstance;
 import logic.schedule.algorithm.impl.GTAlgorithm;
-import logic.schedule.rules.Rule;
 import logic.schedule.rules.impl.*;
 
 import java.io.File;
@@ -34,7 +33,7 @@ public class MenuCluster {
         filePath = new File(path.getFile()).getPath();
         service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
 
-        service = new FileDataImpl<TaillardInstance>(new TaillardExtendedFileImpl());
+        service = new FileDataImpl<TaillardInstance>(new ExtendedFileImpl());
 
 
         Instance ins = service.getData(filePath);

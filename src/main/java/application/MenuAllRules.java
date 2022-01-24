@@ -8,13 +8,12 @@ import logic.output.Writer;
 import logic.output.impl.ExcelWriterImpl;
 import logic.parser.FileData;
 import logic.parser.impl.FileDataImpl;
-import logic.parser.impl.TaillardExtendedFileImpl;
+import logic.parser.impl.ExtendedFileImpl;
 import logic.parser.impl.TaillardFileImpl;
 import logic.schedule.ScheduleInstance;
 import logic.schedule.algorithm.impl.GTAlgorithm;
 import logic.schedule.rules.Rule;
 import logic.schedule.rules.impl.*;
-
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,10 +38,7 @@ public class MenuAllRules {
 
     public static void main(String args[]) throws ParserException, AlgorithmException {
 
-        // input example: m prueba
-
         objFunction = args[0];
-
         objFunction = String.valueOf(objFunction);
 
         if (!objFunction.toLowerCase().equals("m") && !objFunction.toLowerCase().equals("t")) {
@@ -60,9 +56,8 @@ public class MenuAllRules {
                 extended = true;
         }
 
-
         selectInstType(extended);
-        rules = new ArrayList<Rule>();
+        rules = new ArrayList<>();
 
         try {
             File file = new File(input);
@@ -132,7 +127,6 @@ public class MenuAllRules {
         rules.clear();
         rules.add(new SPTRule());
         rules.add(new LPTRule());
-        rules.add(new MCTRule());
 
         if (objFunction.equals("t")) {
             rules.add(new EDDRule(ins));
@@ -147,10 +141,11 @@ public class MenuAllRules {
 
         try {
             if (extended)
-                service = new FileDataImpl<TaillardInstance>(new TaillardExtendedFileImpl());
+                service = new FileDataImpl<TaillardInstance>(new ExtendedFileImpl());
             else if (!extended && objFunction.equals("m"))
                 service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
-
+            else
+                throw new ParserException("Error!");
         } catch (Exception e) {
             throw new ParserException("Problem related to file instance.\n" +
                     "Maybe the file instance cannot be executed with the objective function selected.");
