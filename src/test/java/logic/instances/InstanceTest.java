@@ -33,9 +33,7 @@ public class InstanceTest {
             String filePath = String.valueOf(new File(full));
             service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
             ins = service.getData(filePath);
-            Operation o = ins.getJobs().get(0).getOperations().get(0);
-            rt = new ResultTask(o.getProcessingTime(), 0, o.getProcessingTime(), o.getMachineId(),
-                    o.getJobId());
+
         } catch (Exception e) {
             fail();
         }
@@ -124,14 +122,6 @@ public class InstanceTest {
         Assertions.assertTrue(ins.getJobs().get(0).getOperations().get(0).isScheduled());
         ins.getJobs().get(0).resetOperations();
         Assertions.assertFalse(ins.getJobs().get(0).getOperations().get(0).isScheduled());
-
-        // Comprobar el funcionamiento de ResultTask:
-        Assertions.assertEquals(rt.getnMachine(), ins.getJobs().get(0).getOperations().get(0).getMachineId());
-        Assertions.assertEquals(rt.getStartTime(), 0);
-        Assertions.assertEquals(rt.getProcessingTime(),
-                ins.getJobs().get(0).getOperations().get(0).getProcessingTime());
-        Assertions.assertEquals(rt.getJobId(), ins.getJobs().get(0).getOperations().get(0).getJobId());
-        Assertions.assertEquals(rt.getEndTime(), ins.getJobs().get(0).getOperations().get(0).getProcessingTime());
     }
 
     @Test
@@ -162,7 +152,28 @@ public class InstanceTest {
         Assertions.assertEquals(ins.getJobs().get(1).getJobId(), 2);
         Assertions.assertEquals(ins.getJobs().get(1).getDueDate(), 7);
         Assertions.assertEquals(ins.getJobs().get(1).getWeight(), 2.0);
-
     }
 
+    @Test
+    public void testResultTask() {
+        try {
+            File instance = new File(res + "tai02x03.txt");
+            String full = instance.getAbsolutePath();
+            String filePath = String.valueOf(new File(full));
+            service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
+            ins = service.getData(filePath);
+            Operation o = ins.getJobs().get(0).getOperations().get(0);
+            rt = new ResultTask(o.getProcessingTime(), 0, o.getProcessingTime(), o.getMachineId(),
+                    o.getJobId());
+        } catch (Exception e) {
+            fail();
+        }
+        // Comprobar el funcionamiento de ResultTask:
+        Assertions.assertEquals(rt.getnMachine(), ins.getJobs().get(0).getOperations().get(0).getMachineId());
+        Assertions.assertEquals(rt.getStartTime(), 0);
+        Assertions.assertEquals(rt.getProcessingTime(),
+                ins.getJobs().get(0).getOperations().get(0).getProcessingTime());
+        Assertions.assertEquals(rt.getJobId(), ins.getJobs().get(0).getOperations().get(0).getJobId());
+        Assertions.assertEquals(rt.getEndTime(), ins.getJobs().get(0).getOperations().get(0).getProcessingTime());
+    }
 }

@@ -1,8 +1,6 @@
 package logic.output;
 
 import logic.instances.Instance;
-import logic.schedule.rules.Rule;
-
 import java.util.List;
 
 public interface Writer {

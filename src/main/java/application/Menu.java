@@ -1,24 +1,28 @@
 package application;
 
-import application.util.console.Console;
 import logic.exceptions.AlgorithmException;
-import logic.exceptions.InputException;
 import logic.exceptions.ParserException;
 import logic.instances.Instance;
-import logic.instances.Job;
 import logic.instances.taillard.TaillardInstance;
 import logic.parser.FileData;
-import logic.parser.impl.FileDataImpl;
 import logic.parser.impl.ExtendedFileImpl;
+import logic.parser.impl.FileDataImpl;
 import logic.parser.impl.TaillardFileImpl;
 import logic.schedule.ScheduleInstance;
 import logic.schedule.algorithm.impl.GTAlgorithm;
 import logic.schedule.rules.Rule;
-import logic.schedule.rules.impl.*;
-
+import logic.schedule.rules.impl.ATCRule;
+import logic.schedule.rules.impl.EDDRule;
+import logic.schedule.rules.impl.LPTRule;
+import logic.schedule.rules.impl.SPTRule;
 import java.io.File;
+import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public class Menu {
 
@@ -26,74 +30,99 @@ public class Menu {
     private static String filePath;
     private static String outputName;
     private static Instance ins;
-    private static double kValue;
+    private static String objFunction;
+    private static List<Rule> rules;
     private static FileData<Instance> service;
     private static ScheduleInstance scheduler;
 
 
-    public static void main(String args[]) throws ParserException {
+    public static void main(String args[]) throws ParserException, URISyntaxException {
 
-        // 1. Preguntar qué tipo de instancia: Taillard o extendida.
-        int instanceType = Console.readInt("\nWelcome. What type of instance will you want to load?" +
-                "\n0 - Exit\n1 - Taillard\n2 - Extended (with weights and due dates)" +
-                "\nPlease, type only the number");
+        objFunction = args[0];
+        objFunction = String.valueOf(objFunction);
 
-        if (instanceType == 0 || instanceType > 2 || instanceType < 0) {
+        if (!objFunction.equalsIgnoreCase("m") && !objFunction.equalsIgnoreCase("t")) {
             System.exit(0);
         }
 
-        // 2. Preguntar si es solo un archivo o una carpeta con varios,
-        input = Console.readString("\nPlease, load a Taillard file with txt extension or a directory with all" +
-                "the instances you are willing to execute. Consider that the files must be of the same type. " +
-                "\nExample: <C:\\Users\\christine\\Downloads\\fileExample.txt> (without the <> symbols)");
+        String name = args[1];
+        File fname = new File(name);
+        if (!fname.isAbsolute()) {
+            File jar = new File(Menu.class.getProtectionDomain().getCodeSource().getLocation().getPath());
+            Path p = Paths.get(jar.getPath());
+            input = p.getParent().toString() + "\\" + name;
+        }
+        else
+            input = name;
+
+        boolean extended = false;
+        if (args.length > 2) {
+            String ext = args[2];
+            if (ext.equalsIgnoreCase("e"))
+                extended = true;
+        }
+
+        selectInstType(extended);
+        rules = new ArrayList<>();
 
         try {
             File file = new File(input);
-            int r = chooseRule(instanceType);
-            if (r == 5) {
-                kValue = Console.readDouble("Specify k value [0, 1]: ");
-                if (kValue < 0 || kValue > 1)
-                    throw new InputException("Input k must be between 0 and 1, and a double value.");
-            }
 
             if (file.isDirectory()) {
-                File[] filesInFolder = file.listFiles();
 
-                for (File f : filesInFolder) {
+                File[] filesInFolder = file.listFiles();
+                Arrays.sort(filesInFolder, Comparator.comparingLong(File::lastModified));
+
+                int rowNum = 2;
+
+                for (int n = 0; n < filesInFolder.length; n++) {
+                    File f = filesInFolder[n];
+
                     if (f.isFile()) {
                         Path path = Paths.get(f.getPath());
                         filePath = new File(String.valueOf(path)).getPath();
-
                         String fileName = path.getFileName().toString();
-                        String sheetName = fileName.substring(0, fileName.lastIndexOf('.'));
-                        outputName = file.getName() + " " + r;
-
+                        String instName = fileName.substring(0, fileName.lastIndexOf('.'));
+                        outputName = file.getName();
                         ins = service.getData(filePath);
-                        execute(path.getParent().toString(), sheetName, r);
-                        for (Job j: ins.getJobs()){
-                            j.resetOperations();
+
+                        addRules();
+
+                        for (int i = 0; i < rules.size(); i++) {
+                            int colNum = i+2;
+                            execute(path.getParent().toString(), instName, rowNum, colNum, rules.get(i), extended);
                         }
+
+                        //if (objFunction.equals("m") && extended) {
+                        //    n += 2;
+                        //}
+
+                        rowNum++;
                     }
                 }
 
+                System.out.println("\nArchivo xlsx generado con los resultados.\n");
+
             } else {
+
                 if (file.isFile()){
                     Path path = Paths.get(input);
                     filePath = new File(String.valueOf(path)).getPath();
 
                     String fileName = path.getFileName().toString();
-                    String sheetName = fileName.substring(0, fileName.lastIndexOf('.'));
-                    outputName = sheetName + " " + r;
-
+                    String instName = fileName.substring(0, fileName.lastIndexOf('.'));
+                    outputName = instName;
                     ins = service.getData(filePath);
-                    execute(path.getParent().toString(), sheetName, r);
-                    for (Job j: ins.getJobs()){
-                        j.resetOperations();
+                    addRules();
+
+                    for (int i = 0; i < rules.size(); i++) {
+                        int colNum = i+2;
+                        execute(path.getParent().toString(), instName, 2, colNum, rules.get(i), extended);
                     }
+
+                    System.out.println("\nArchivo xlsx generado con los resultados.\n");
                 }
             }
-
-            System.out.println("\nArchivo xlsx generado con los resultados.\n");
 
         } catch (Exception e) {
             throw new ParserException("Probably it already exists some file with the same information or name.");
@@ -101,69 +130,46 @@ public class Menu {
 
     }
 
-    private static int chooseRule(int instanceType) throws ParserException {
-        int rule = 0;
+    private static void addRules() {
+        rules.clear();
+        rules.add(new SPTRule());
+        rules.add(new LPTRule());
+
+        if (objFunction.equals("t")) {
+            rules.add(new EDDRule(ins));
+            rules.add(new ATCRule(ins, 0.25));
+            rules.add(new ATCRule(ins, 0.5));
+            rules.add(new ATCRule(ins, 0.75));
+            rules.add(new ATCRule(ins, 1));
+        }
+    }
+
+    private static boolean selectInstType(boolean extended) throws ParserException {
+
         try {
-            switch (instanceType) {
-                case 1:
-                    rule = Console.readInt("\nWhat rule are you willing to apply?\n" +
-                            "\n1 - SPT (Shortest Processing Time)\n2 - LPT (Longest Processing Time)");
-                    if (rule == 0 || rule > 2 || rule < 0) {
-                        System.exit(0);
-                    }
-                    service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
-                    break;
-
-                case 2:
-                    rule = Console.readInt("\nWhat rule are you willing to apply?\n" +
-                            "\n1 - SPT (Shortest Processing Time)\n2 - LPT (Longest Processing Time)" +
-                            "\n3 - EDD (Earliest Due Date)" +
-                            "\n4 - ATC (Apparent Tardiness Cost)\nPlease, type only the number");
-                    if (rule == 0 || rule > 4 || rule < 0) {
-                        System.exit(0);
-                    }
-                    service = new FileDataImpl<TaillardInstance>(new ExtendedFileImpl());
-                    break;
-            }
-
+            if (extended)
+                service = new FileDataImpl<TaillardInstance>(new ExtendedFileImpl());
+            else if (!extended && objFunction.equals("m"))
+                service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
+            else
+                throw new ParserException("Error!");
         } catch (Exception e) {
             throw new ParserException("Problem related to file instance.\n" +
-                    "Maybe the file instance does not match the instance type selected.");
+                    "Maybe the file instance cannot be executed with the objective function selected.");
         }
-
-        return rule;
+        return false;
     }
 
-    private static void execute(String path, String sheetName, int rule) throws InputException,
-            AlgorithmException {
-        Rule ruleToApply = null;
-
-        switch (rule) {
-            case 1:
-                ruleToApply = new SPTRule();
-                break;
-
-            case 2:
-                ruleToApply = new LPTRule();
-                break;
-
-            case 3:
-                ruleToApply = new EDDRule(ins);
-                break;
-
-            case 4:
-                ruleToApply = new ATCRule(ins, kValue);
-                break;
-        }
-
-
+    private static void execute(String path, String instName, int rowNum, int colNum, Rule rule, boolean ext)
+            throws AlgorithmException {
         try {
-            scheduler = new ScheduleInstance(new GTAlgorithm(ins, ruleToApply));
+            scheduler = new ScheduleInstance(new GTAlgorithm(ins, rule));
             scheduler.executeAlgorithm();
-            scheduler.generateOutput(path, outputName, sheetName);
+            scheduler.generateAllOutput(path, outputName, instName, rowNum, colNum, ext, objFunction);
 
         } catch (Exception e) {
-            throw new AlgorithmException("Error in scheduling algorithm.");
+            throw new AlgorithmException(e);
         }
     }
+
 }

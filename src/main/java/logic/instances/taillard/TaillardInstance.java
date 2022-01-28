@@ -27,7 +27,7 @@ public class TaillardInstance extends Instance {
      * @param totalProcessingTime tiempo de procesamiento total de todas las tareas que forman la instancia
      */
     public TaillardInstance(int nJobs, int nMachines, List<Job> jobs, int totalProcessingTime) {
-        super(nJobs, nMachines, totalProcessingTime, -1, -1);
+        super(nJobs, nMachines, totalProcessingTime);
         this.jobs = jobs;
     }
 

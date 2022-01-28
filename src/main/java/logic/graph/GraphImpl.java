@@ -1,7 +1,6 @@
 package logic.graph;
 
 import logic.exceptions.AlgorithmException;
-import logic.instances.taillard.TaillardInstance;
 
 import java.util.*;
 

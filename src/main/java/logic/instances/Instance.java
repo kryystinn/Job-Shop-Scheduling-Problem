@@ -27,6 +27,20 @@ public abstract class Instance implements Serializable {
      * @param nJobs número de trabajos de la instancia
      * @param nMach número de máquinas de la instancia
      * @param totalProcTime tiempo de procesamiento total de todas las tareas que forman la instancia
+     */
+    public Instance(int nJobs, int nMach, int totalProcTime){
+        this.nJobs = nJobs;
+        this.nMachines = nMach;
+        this.totalProcessingTime = totalProcTime;
+        createMachines();
+    }
+
+    /**
+     * Constructor de la clase {@link Instance}.
+     *
+     * @param nJobs número de trabajos de la instancia
+     * @param nMach número de máquinas de la instancia
+     * @param totalProcTime tiempo de procesamiento total de todas las tareas que forman la instancia
      * @param lowerBound cota inferior de la instancia, si no tiene será un valor de -1
      */
     public Instance(int nJobs, int nMach, int totalProcTime, int lowerBound, int upperBound){
