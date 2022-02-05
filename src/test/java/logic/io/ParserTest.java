@@ -4,14 +4,17 @@ import logic.exceptions.ParserException;
 import logic.instances.Instance;
 import logic.instances.taillard.TaillardInstance;
 import logic.parser.FileData;
+import logic.parser.impl.ExtendedFileImpl;
 import logic.parser.impl.FileDataImpl;
 import logic.parser.impl.TaillardFileImpl;
 import logic.schedule.ScheduleInstance;
 import logic.schedule.algorithm.impl.GTAlgorithm;
 import logic.schedule.rules.impl.SPTRule;
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,17 +41,13 @@ public class ParserTest {
         instance = new File(res + "sinExtension");
         String full = instance.getAbsolutePath();
         filePath = String.valueOf(new File(full));
-        Assertions.assertThrows(ParserException.class, () -> {
-            ins = service.getData(filePath);
-        });
+        Assertions.assertThrows(ParserException.class, () -> ins = service.getData(filePath));
     }
 
     @Test
     public void testNull() {
         filePath = null;
-        Exception exp = Assertions.assertThrows(ParserException.class, () -> {
-            ins = service.getData(filePath);
-        });
+        Exception exp = Assertions.assertThrows(ParserException.class, () -> ins = service.getData(filePath));
         Assertions.assertTrue(exp.getMessage().contains("File is null"));
     }
 
@@ -57,9 +56,7 @@ public class ParserTest {
         instance = new File(res + "otraExtension.pdf");
         String full = instance.getAbsolutePath();
         filePath = String.valueOf(new File(full));
-        Assertions.assertThrows(ParserException.class, () -> {
-            ins = service.getData(filePath);
-        });
+        Assertions.assertThrows(ParserException.class, () -> ins = service.getData(filePath));
     }
 
     @Test
@@ -67,9 +64,7 @@ public class ParserTest {
         instance = new File(res + "invent.txt");
         String full = instance.getAbsolutePath();
         filePath = String.valueOf(new File(full));
-        Assertions.assertThrows(ParserException.class, () -> {
-            ins = service.getData(filePath);
-        });
+        Assertions.assertThrows(ParserException.class, () -> ins = service.getData(filePath));
     }
 
     @Test
@@ -77,9 +72,24 @@ public class ParserTest {
         instance = new File(res + "tai02x03mal.txt");
         String full = instance.getAbsolutePath();
         filePath = String.valueOf(new File(full));
-        Assertions.assertThrows(ParserException.class, () -> {
-            ins = service.getData(filePath);
-        });
+        Assertions.assertThrows(ParserException.class, () -> ins = service.getData(filePath));
+    }
+
+    @Test
+    public void testSelectNotExtended() {
+        instance = new File(res + "tai02x03ext.txt");
+        String full = instance.getAbsolutePath();
+        filePath = String.valueOf(new File(full));
+        Assertions.assertThrows(ParserException.class, () -> ins = service.getData(filePath));
+    }
+
+    @Test
+    public void testSelectExtended() {
+        instance = new File(res + "tai02x03.txt");
+        String full = instance.getAbsolutePath();
+        filePath = String.valueOf(new File(full));
+        service = new FileDataImpl<TaillardInstance>(new ExtendedFileImpl());
+        Assertions.assertThrows(ParserException.class, () -> ins = service.getData(filePath));
     }
 
     @Test
@@ -89,9 +99,7 @@ public class ParserTest {
         try {
             if (file.isDirectory()) {
                 File[] filesInFolder = file.listFiles();
-                for (int n = 0; n < filesInFolder.length; n++) {
-                    File f = filesInFolder[n];
-
+                for (File f : filesInFolder) {
                     if (f.isFile()) {
                         Path path = Paths.get(f.getPath());
                         filePath = new File(String.valueOf(path)).getPath();
@@ -110,26 +118,29 @@ public class ParserTest {
     @Test
     public void notEmptyDir() {
         File file = new File(res + "dir");
-
+        File out = new File(file.getPath() + "\\out");
         try {
             if (file.isDirectory()) {
-                File[] filesInFolder = file.listFiles();
-                for (int n = 0; n < filesInFolder.length; n++) {
-                    File f = filesInFolder[n];
+                if (out.exists())
+                    FileUtils.deleteDirectory(new File(out.getAbsolutePath()));
 
+                File[] filesInFolder = file.listFiles();
+                for (File f : filesInFolder) {
                     if (f.isFile()) {
-                        Path path = Paths.get(f.getPath());
+                        Path path = Paths.get(f.getAbsolutePath());
                         filePath = new File(String.valueOf(path)).getPath();
+                        service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
                         ins = service.getData(filePath);
                         scheduler = new ScheduleInstance(new GTAlgorithm(ins, new SPTRule()));
+                        scheduler.executeAlgorithm();
+                        scheduler.generateOutput(file.getAbsolutePath(), "tai", "result");
                     }
-
                 }
             }
         } catch (Exception e) {
             fail();
         }
-        Assertions.assertFalse(new File(file.getPath() + "\\out").exists());
+        Assertions.assertTrue(out.exists());
     }
 
 

@@ -15,7 +15,7 @@ public class TaillardInstance extends Instance {
 
     private int timeSeed;
     private int machineSeed;
-    private List<Job> jobs;
+    private final List<Job> jobs;
 
 
     /**
@@ -60,6 +60,5 @@ public class TaillardInstance extends Instance {
     public List<Job> getJobs() {
         return jobs;
     }
-
 
 }

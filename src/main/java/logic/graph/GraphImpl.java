@@ -1,7 +1,6 @@
 package logic.graph;
 
 import logic.exceptions.AlgorithmException;
-
 import java.util.*;
 
 /**
@@ -12,7 +11,7 @@ import java.util.*;
  */
 public class GraphImpl<T> implements Graph<T> {
 
-    private Map<T, List<T>> nodes;
+    private final Map<T, List<T>> nodes;
 
 
     /**
@@ -32,7 +31,6 @@ public class GraphImpl<T> implements Graph<T> {
         if (nodes.containsKey(node)  || node == null) {
             throw new AlgorithmException("Error due to the addition of node to the graph.");
         }
-
         nodes.put(node, new LinkedList<>());
     }
 
@@ -41,7 +39,7 @@ public class GraphImpl<T> implements Graph<T> {
      *
      * @param source nodo origen
      * @param destination nodo destino
-     * @throws AlgorithmException
+     * @throws AlgorithmException si falla el añadir una arista
      */
     @Override
     public void addEdge(T source, T destination) throws AlgorithmException {
@@ -55,7 +53,7 @@ public class GraphImpl<T> implements Graph<T> {
      * @param source nodo origen
      * @param destination nodo destino
      * @param bidirectional true/false en función de si es una unión no dirigida/dirigida, respectivamente
-     * @throws AlgorithmException
+     * @throws AlgorithmException si falla el añadir una arista
      */
     @Override
     public void addEdge(T source, T destination, boolean bidirectional) throws AlgorithmException {
@@ -112,7 +110,6 @@ public class GraphImpl<T> implements Graph<T> {
                 incomingEdges.add(n);
             }
         }
-
         return incomingEdges;
     }
 

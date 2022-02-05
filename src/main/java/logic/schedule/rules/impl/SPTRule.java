@@ -30,8 +30,8 @@ public class SPTRule implements Rule {
             if (shortestProcessTime.getProcessingTime() == 0 || o.getProcessingTime() == 0)
                 return shortestProcessTime;
             else {
-                double prior1 = 1.0 / Double.valueOf(shortestProcessTime.getProcessingTime());
-                double prior2 = 1.0 / Double.valueOf(o.getProcessingTime());
+                double prior1 = 1.0 / (double) shortestProcessTime.getProcessingTime();
+                double prior2 = 1.0 / (double) o.getProcessingTime();
                 if (prior1 < prior2){
                     shortestProcessTime = o;
                 }

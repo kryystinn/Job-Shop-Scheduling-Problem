@@ -6,7 +6,4 @@ public class InputException extends Exception {
         super(message);
     }
 
-    public InputException(Exception e) {
-        super(e);
-    }
 }

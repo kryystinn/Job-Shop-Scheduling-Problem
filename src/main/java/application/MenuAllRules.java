@@ -24,30 +24,33 @@ import java.nio.file.Paths;
 
 public class MenuAllRules {
 
-    private static String input;
-    private static String filePath;
     private static String outputName;
     private static Instance ins;
     private static double kValue;
     private static FileData<Instance> service;
-    private static ScheduleInstance scheduler;
 
 
-    public static void main(String args[]) throws ParserException, AlgorithmException {
+    public static void main(String[] args) throws AlgorithmException {
 
         // 1. Preguntar qué tipo de instancia: Taillard o extendida.
-        int instanceType = Console.readInt("\nWelcome. What type of instance will you want to load?" +
-                "\n0 - Exit\n1 - Taillard\n2 - Extended (with weights and due dates)" +
-                "\nPlease, type only the number");
+        int instanceType = Console.readInt("""
+
+                Welcome. What type of instance will you want to load?
+                0 - Exit
+                1 - Taillard
+                2 - Extended (with weights and due dates)
+                Please, type only the number""");
 
         if (instanceType == 0 || instanceType > 2 || instanceType < 0) {
             System.exit(0);
         }
 
         // 2. Preguntar si es solo un archivo o una carpeta con varios,
-        input = Console.readString("\nPlease, load a Taillard file with txt extension or a directory with all" +
-                "the instances you are willing to execute. Consider that the files must be of the same type. " +
-                "\nExample: <C:\\Users\\christine\\Downloads\\fileExample.txt> (without the <> symbols)");
+        String input = Console.readString("""
+
+                Please, load a Taillard file with txt extension or a directory with allthe instances you are willing to 
+                execute. Consider that the files must be of the same type.\s
+                Example: <C:\\Users\\christine\\Downloads\\fileExample.txt> (without the <> symbols)""");
 
         try {
             File file = new File(input);
@@ -58,9 +61,11 @@ public class MenuAllRules {
                     throw new InputException("Input k must be between 0 and 1, and a double value.");
             }
 
+            String filePath;
             if (file.isDirectory()) {
                 File[] filesInFolder = file.listFiles();
 
+                assert filesInFolder != null;
                 for (File f : filesInFolder) {
                     if (f.isFile()) {
                         Path path = Paths.get(f.getPath());
@@ -160,7 +165,7 @@ public class MenuAllRules {
 
 
         try {
-            scheduler = new ScheduleInstance(new GTAlgorithm(ins, ruleToApply));
+            ScheduleInstance scheduler = new ScheduleInstance(new GTAlgorithm(ins, ruleToApply));
             scheduler.executeAlgorithm();
             scheduler.generateOutput(path, outputName, sheetName);
 

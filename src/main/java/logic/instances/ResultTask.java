@@ -10,11 +10,11 @@ import java.io.Serializable;
  */
 public class ResultTask implements Serializable {
 
-    private long processingTime;
-    private long startTime;
-    private long endTime;
-    private int nMachine;
-    private int jobId;
+    private final long processingTime;
+    private final long startTime;
+    private final long endTime;
+    private final int nMachine;
+    private final int jobId;
 
 
     /**

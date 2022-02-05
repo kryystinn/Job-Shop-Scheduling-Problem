@@ -10,9 +10,9 @@ import java.io.Serializable;
  */
 public class Machine implements Serializable {
 
-    private int machineId;
+    private final int machineId;
+    private final boolean isBusy;
     private long releaseTime;
-    private boolean isBusy;
 
     /**
      * Constructor de la clase {@link Machine}.

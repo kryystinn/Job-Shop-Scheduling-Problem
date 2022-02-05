@@ -1,19 +1,22 @@
 package logic.schedule.algorithm;
 
 import logic.exceptions.AlgorithmException;
-import logic.instances.Instance;
 import logic.instances.ResultTask;
-import logic.schedule.rules.Rule;
-
 import java.util.List;
 
+/**
+ * Interfaz ScheduleAlgorithm que representa un algoritmo de planificación.
+ *
+ * @author Cristina Ruiz de Bucesta Crespo
+ *
+ */
 public interface ScheduleAlgorithm {
 
-    public List<ResultTask> run() throws AlgorithmException;
+    List<ResultTask> run() throws AlgorithmException;
 
-    public void writeStartingTimeMatrix(String path, String output, String sheet);
+    void writeStartingTimeMatrix(String path, String output, String sheet);
 
-    public void writeAll(String path, String output, String inst, int rowNum, int colNum,
+    void writeAll(String path, String output, String inst, int rowNum, int colNum,
                          boolean extended, String objFun);
 
 }

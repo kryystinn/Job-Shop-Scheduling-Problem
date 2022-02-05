@@ -1,7 +1,6 @@
 package logic.io;
 
 import logic.instances.Instance;
-import logic.instances.ResultTask;
 import logic.instances.taillard.TaillardInstance;
 import logic.parser.FileData;
 import logic.parser.impl.FileDataImpl;
@@ -15,25 +14,16 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.fail;
 
 public class WriterTest {
 
     private static String res;
-    private static File instance;
-    private static String filePath;
-    private static FileData<Instance> service;
-    private static Instance ins;
-    private static ScheduleInstance scheduler;
-    private static List<ResultTask> results;
 
     @BeforeAll
     public static void setUp() {
         res = "src\\test\\resources\\";
-        results = new ArrayList<>();
     }
 
     @Test
@@ -45,12 +35,12 @@ public class WriterTest {
 
         try {
             String instName = "tai02x03";
-            instance = new File(res + instName + ".txt");
+            File instance = new File(res + instName + ".txt");
             String full = instance.getAbsolutePath();
-            filePath = String.valueOf(new File(full));
-            service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
-            ins = service.getData(filePath);
-            scheduler = new ScheduleInstance(new GTAlgorithm(ins, rule));
+            String filePath = String.valueOf(new File(full));
+            FileData<Instance> service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
+            Instance ins = service.getData(filePath);
+            ScheduleInstance scheduler = new ScheduleInstance(new GTAlgorithm(ins, rule));
             scheduler.executeAlgorithm();
             scheduler.generateAllOutput(res, instName, "tai02x03", 2, 2, false, "m");
 

@@ -15,8 +15,8 @@ import logic.schedule.rules.impl.ATCRule;
 import logic.schedule.rules.impl.EDDRule;
 import logic.schedule.rules.impl.LPTRule;
 import logic.schedule.rules.impl.SPTRule;
+
 import java.io.File;
-import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -26,17 +26,14 @@ import java.util.List;
 
 public class Menu {
 
-    private static String input;
-    private static String filePath;
     private static String outputName;
     private static Instance ins;
     private static String objFunction;
     private static List<Rule> rules;
     private static FileData<Instance> service;
-    private static ScheduleInstance scheduler;
 
 
-    public static void main(String args[]) throws ParserException, URISyntaxException {
+    public static void main(String[] args) throws ParserException {
 
         objFunction = args[0];
         objFunction = String.valueOf(objFunction);
@@ -47,6 +44,7 @@ public class Menu {
 
         String name = args[1];
         File fname = new File(name);
+        String input;
         if (!fname.isAbsolute()) {
             File jar = new File(Menu.class.getProtectionDomain().getCodeSource().getLocation().getPath());
             Path p = Paths.get(jar.getPath());
@@ -68,6 +66,7 @@ public class Menu {
         try {
             File file = new File(input);
 
+            String filePath;
             if (file.isDirectory()) {
 
                 File[] filesInFolder = file.listFiles();
@@ -75,9 +74,7 @@ public class Menu {
 
                 int rowNum = 2;
 
-                for (int n = 0; n < filesInFolder.length; n++) {
-                    File f = filesInFolder[n];
-
+                for (File f : filesInFolder) {
                     if (f.isFile()) {
                         Path path = Paths.get(f.getPath());
                         filePath = new File(String.valueOf(path)).getPath();
@@ -89,7 +86,7 @@ public class Menu {
                         addRules();
 
                         for (int i = 0; i < rules.size(); i++) {
-                            int colNum = i+2;
+                            int colNum = i + 2;
                             execute(path.getParent().toString(), instName, rowNum, colNum, rules.get(i), extended);
                         }
 
@@ -101,7 +98,7 @@ public class Menu {
                     }
                 }
 
-                System.out.println("\nArchivo xlsx generado con los resultados.\n");
+                System.out.println("\nXlsx file created with the results.\n");
 
             } else {
 
@@ -120,7 +117,7 @@ public class Menu {
                         execute(path.getParent().toString(), instName, 2, colNum, rules.get(i), extended);
                     }
 
-                    System.out.println("\nArchivo xlsx generado con los resultados.\n");
+                    System.out.println("\nXlsx file created with the results.\n");
                 }
             }
 
@@ -147,15 +144,17 @@ public class Menu {
     private static boolean selectInstType(boolean extended) throws ParserException {
 
         try {
-            if (extended)
-                service = new FileDataImpl<TaillardInstance>(new ExtendedFileImpl());
-            else if (!extended && objFunction.equals("m"))
+            if (!extended && objFunction.equals("m"))
                 service = new FileDataImpl<TaillardInstance>(new TaillardFileImpl());
+
+            else if (extended)
+                service = new FileDataImpl<TaillardInstance>(new ExtendedFileImpl());
             else
                 throw new ParserException("Error!");
         } catch (Exception e) {
             throw new ParserException("Problem related to file instance.\n" +
-                    "Maybe the file instance cannot be executed with the objective function selected.");
+                    "Reminder: if you are trying to execute an extended instance it is necessary to add the third" +
+                    " parameter <e> in the sentence java -jar JSSP.jar arg1 arg2 [arg3]");
         }
         return false;
     }
@@ -163,7 +162,7 @@ public class Menu {
     private static void execute(String path, String instName, int rowNum, int colNum, Rule rule, boolean ext)
             throws AlgorithmException {
         try {
-            scheduler = new ScheduleInstance(new GTAlgorithm(ins, rule));
+            ScheduleInstance scheduler = new ScheduleInstance(new GTAlgorithm(ins, rule));
             scheduler.executeAlgorithm();
             scheduler.generateAllOutput(path, outputName, instName, rowNum, colNum, ext, objFunction);
 

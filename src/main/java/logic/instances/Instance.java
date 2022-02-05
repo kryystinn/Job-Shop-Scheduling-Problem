@@ -1,7 +1,5 @@
 package logic.instances;
 
-import logic.exceptions.ParserException;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,10 +12,10 @@ import java.util.List;
  */
 public abstract class Instance implements Serializable {
 
-    private int nJobs;
-    private int nMachines;
+    private final int nJobs;
+    private final int nMachines;
+    private final int totalProcessingTime;
     private List<Machine> machines;
-    private int totalProcessingTime;
     private int lowerBound;
     private int upperBound;
 
@@ -60,7 +58,7 @@ public abstract class Instance implements Serializable {
      *
      */
     private void createMachines(){
-        machines = new ArrayList<Machine>();
+        machines = new ArrayList<>();
         for (int i = 0; i < nMachines; i++){
             machines.add(new Machine(i));
         }

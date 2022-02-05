@@ -15,12 +15,12 @@ import java.util.List;
  */
 public class EDDRule implements Rule {
 
-    private List<Job> jobs;
+    private final List<Job> jobs;
     private static final int HIGH_VALUE = Integer.MAX_VALUE;
 
 
     /**
-     * Constructor de la cllase {@link EDDRule}
+     * Constructor de la clase {@link EDDRule}
      *
      * @param instance instancia del problema.
      */
@@ -48,8 +48,8 @@ public class EDDRule implements Rule {
             for (Job j: jobs) {
                 if (op.getJobId() == j.getJobId()) {
 
-                    double prior1 = Double.valueOf(1.0 / j.getDueDate());
-                    double prior2 = Double.valueOf(1.0 / opJobHasEarliestDueDate);
+                    double prior1 = 1.0 / j.getDueDate();
+                    double prior2 = 1.0 / opJobHasEarliestDueDate;
 
                     if (prior1 > prior2){
                         opJobHasEarliestDueDate = j.getDueDate();

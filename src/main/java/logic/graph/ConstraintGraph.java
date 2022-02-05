@@ -17,7 +17,7 @@ import java.util.Map;
  */
 public class ConstraintGraph extends GraphImpl<Operation> {
 
-    private Instance instance;
+    private final Instance instance;
     private Operation source;
     private Operation end;
 
@@ -29,7 +29,7 @@ public class ConstraintGraph extends GraphImpl<Operation> {
      * Constructor de la clase {@link ConstraintGraph}
      *
      * @param ins instancia para crear a partir de ella el grafo de restricciones
-     * @throws AlgorithmException
+     * @throws AlgorithmException si hay fallos al crear el grafo de restricciones
      */
     public ConstraintGraph(Instance ins) throws AlgorithmException {
         super();
@@ -41,7 +41,7 @@ public class ConstraintGraph extends GraphImpl<Operation> {
     /**
      * Crea el grafo de restricciones a partir de las operaciones y los trabajos de la instancia.
      *
-     * @throws AlgorithmException
+     * @throws AlgorithmException si hay fallos al crear el grafo de restricciones
      */
     private void createGraph() throws AlgorithmException {
         // Nodo estado inicial y final
@@ -61,7 +61,7 @@ public class ConstraintGraph extends GraphImpl<Operation> {
      * Crea las operaciones añadiendo entre una y la siguiente una arista (edge) (del mismo job), siendo la primera
      * unión de todos los nodos con el source y la última de todos los nodos el end.
      *
-     * @throws AlgorithmException
+     * @throws AlgorithmException si hay fallos al crear los nodos del grafo de restricciones
      */
     private void createOperations() throws AlgorithmException {
         for (Job j: instance.getJobs()) {
@@ -83,17 +83,17 @@ public class ConstraintGraph extends GraphImpl<Operation> {
      * Seguidamente, recorre todas las operaciones de cada trabajo, añadiendo un arista a todas aquellas operaciones
      * que coincidan en la máquina que tienen asignada para ejecutarse.
      *
-     * @throws AlgorithmException
+     * @throws AlgorithmException si hay fallos al crear las relaciones del grafo de restricciones
      */
     private void createMatchingOperationsMachines() throws AlgorithmException {
-        Map<Integer, List<Operation>> machineOperations = new HashMap<Integer, List<Operation>>();
+        Map<Integer, List<Operation>> machineOperations = new HashMap<>();
 
         // Añade al diccionario el número de la máquina junto con una lista de operaciones que han de ejecutarse en
         // ella
         for(Job job : instance.getJobs()) {
             for(Operation op : job.getOperations()) {
                 if(!machineOperations.containsKey(op.getMachineId())) {
-                    machineOperations.put(op.getMachineId(), new ArrayList<Operation>());
+                    machineOperations.put(op.getMachineId(), new ArrayList<>());
                 }
                 machineOperations.get(op.getMachineId()).add(op);
             }

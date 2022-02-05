@@ -10,11 +10,11 @@ import java.io.Serializable;
  */
 public class Operation implements Serializable {
 
-    private int operationId;
-    private int machineId;
-    private int jobId;
+    private final int operationId;
+    private final int machineId;
+    private final int jobId;
 
-    private long processingTime;
+    private final long processingTime;
     private long startTime;
     private boolean isScheduled;
 

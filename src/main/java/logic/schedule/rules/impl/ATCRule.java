@@ -4,35 +4,62 @@ import logic.instances.Instance;
 import logic.instances.Job;
 import logic.instances.Operation;
 import logic.schedule.rules.Rule;
-
 import java.text.DecimalFormat;
 import java.util.*;
 
+/**
+ * Clase ATCRule que representa la regla de prioridad de Apparent Tardiness Cost.
+ *
+ * @author Cristina Ruiz de Bucesta Crespo
+ *
+ */
 public class ATCRule implements Rule {
 
-    private List<Job> jobs;
-    private double kValue;
-    private Rule auxRule;
+    private final List<Job> jobs;
+    private final double kValue;
+    private final Rule auxRule;
 
-    private static DecimalFormat df = new DecimalFormat("0.00");
+    private static final DecimalFormat df = new DecimalFormat("0.00");
 
+    /**
+     * Constructor de la clase {@link ATCRule}, con un valor de g por defecto de 0.5 y la EDD de regla auxiliar.
+     *
+     * @param instance instancia del problema
+     */
     public ATCRule(Instance instance) {
         this(instance, 0.5, new EDDRule(instance));
     }
 
-    public ATCRule(Instance instance, double kValue) {
+    /**
+     * Constructor de la clase {@link ATCRule} con la EDD de regla auxiliar por defecto
+     *
+     * @param instance instancia del problema
+     * @param gValue valor de g
+     */
+    public ATCRule(Instance instance, double gValue) {
         this.jobs = instance.getJobs();
-        this.kValue = kValue;
+        this.kValue = gValue;
         this.auxRule = new EDDRule(instance);
     }
 
+    /**
+     * Constructor de la clase {@link ATCRule}
+     *
+     * @param instance instancia del problema
+     * @param kValue valor de g
+     * @param auxRule regla auxiliar a utilizar
+     */
     public ATCRule(Instance instance, double kValue, Rule auxRule) {
         this.jobs = instance.getJobs();
         this.kValue = kValue;
         this.auxRule = auxRule;
     }
 
-    class MaxOperation {
+    /**
+     * Clase anidada {@link MaxOperation} para la gestión de los sets de operación y prioridad.
+     *
+     */
+    static class MaxOperation {
         Operation operation;
         double priority;
 
@@ -42,10 +69,17 @@ public class ATCRule implements Rule {
         }
     }
 
+    /**
+     * Método que ejecuta la regla de prioridad. Recibe una lista de operaciones y devuelve aquella que tenga mayor
+     * prioridad, calculada según la fórmula de la ATC.
+     *
+     * @param operations lista de operaciones
+     * @return {@link Operation}
+     */
     @Override
     public Operation run(List<Operation> operations) {
 
-        // coger los pesos y las due dates de los jobs a los que pertenecen las operaciones del set B
+        // Coger los pesos y las due dates de los jobs a los que pertenecen las operaciones del set B
         MaxOperation best = new MaxOperation(null, 0);
         for (Operation op : operations) {
             for (Job j : jobs) {
@@ -71,8 +105,8 @@ public class ATCRule implements Rule {
             }
         }
 
-        // si se da que todas son 0 o indeterminaciones se pasa a la ordenación por una regla auxiliar such as EDD
-        if (best == null || best.operation == null || best.priority == 0) {
+        // Si se da que todas son 0 o indeterminaciones se pasa a la ordenación por una regla auxiliar such as EDD
+        if (best.operation == null || best.priority == 0) {
             return auxRule.run(operations);
         }
 
@@ -80,15 +114,22 @@ public class ATCRule implements Rule {
     }
 
 
-    // función que calcula la prioridad (la fórmula itself de la atc) de cada job
+    /**
+     * Método que calcula la prioridad, es decir, la fórmula de la ATC.
+     *
+     * @param op operación de la cual calcular la prioridad
+     * @param weight peso del trabajo al que pertenece la operación
+     * @param dueDate fecha límite del trabajo al que pertenece la operación
+     * @return la prioridad calculada
+     */
     private double function(Operation op, double weight, int dueDate) {
 
-        // Get the completion time of the job:
+        // Calcular el tiempo de completitud del trabajo:
         long startingTime = op.getStartTime();
         long processingTime = op.getProcessingTime();
 
 
-        // Then get the base:
+        // La base:
         if (processingTime == 0) {
             return 0;
         }
@@ -97,9 +138,9 @@ public class ATCRule implements Rule {
         String baseString = df.format(base);
 
         baseString = baseString.replace(',','.');
-        base = Double.valueOf(baseString);
+        base = Double.parseDouble(baseString);
 
-        // Then get the exponent:
+        // El exponente:
         long numerador = Math.max(dueDate - processingTime - startingTime, 0);
         double denominador = kValue * getAvgProcessingTime();
 
@@ -110,15 +151,18 @@ public class ATCRule implements Rule {
             exp = - numerador / denominador;
 
 
-        // Get the base + exp
-        double priority = Double.valueOf(base * Math.exp(exp));
+        // Calcular la suma de base + exponente
+        double priority = base * Math.exp(exp);
 
         return priority;
     }
 
-
+    /**
+     * Método que calcula la media de tiempo de procesamiento de las tareas no planificadas.
+     *
+     * @return media de tiempos
+     */
     private double getAvgProcessingTime() {
-
         long totalProcessingTime = 0;
         int countNotScheduled = 0;
 
@@ -145,8 +189,6 @@ public class ATCRule implements Rule {
             avgPt = totalProcessingTime / countNotScheduled;
 
         return avgPt;
-
     }
-
 
 }

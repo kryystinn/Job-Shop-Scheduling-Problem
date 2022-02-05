@@ -2,12 +2,9 @@ package logic.output.impl;
 
 import logic.instances.Instance;
 import logic.output.Writer;
-import logic.schedule.rules.Rule;
-import logic.schedule.rules.impl.SPTRule;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -15,17 +12,32 @@ import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.List;
 
+/**
+ * Clase ExcelWriterImpl que escribe un fichero de salida Excel.
+ *
+ * @author Cristina Ruiz de Bucesta Crespo
+ *
+ */
 public class ExcelWriterImpl implements Writer {
 
     String fileName;
 
 
+    /**
+     * Escribe una matriz de resultados con los tiempos de inicio de cada tarea y de cada trabajo en un fichero Excel
+     * con formato ".xlsx".
+     *
+     * @param path ruta del archivo
+     * @param name nombre del archivo
+     * @param sheetName nombre de la hoja de cálculo
+     * @param data resultados
+     */
     @Override
     public void writeMatrixStartTimes(String path, String name, String sheetName, List<String[]> data) {
 
-        File file = null;
-        OutputStream fos = null;
-        XSSFWorkbook workbook = null;
+        File file;
+        OutputStream fos;
+        XSSFWorkbook workbook;
         File out = new File(String.valueOf(Paths.get(path + "\\out")));
 
         try {
@@ -65,15 +77,29 @@ public class ExcelWriterImpl implements Writer {
         }
     }
 
+    /**
+     * Escribe los resultados de la ejecución de las instancias, poniendo una instancia por fila y una regla de
+     * prioridad por columna, variando esta en función si se analiza una función objetivo u otra.
+     *
+     * @param path ruta del archivo
+     * @param name nombre del archivo
+     * @param instName nombre de la instancia
+     * @param rowNum número de fila
+     * @param colNum número de columna
+     * @param instance instancia a tratar
+     * @param result resultado
+     * @param extended true/false en función de si es una instancia extendida o no
+     * @param objFunc función objetivo
+     */
     @Override
     public void write(String path, String name, String instName, int rowNum, int colNum, Instance instance,
                       long result, boolean extended, String objFunc) {
 
 
-        File file = null;
-        OutputStream fos = null;
-        XSSFWorkbook workbook = null;
-        Sheet sheet = null;
+        File file;
+        OutputStream fos;
+        XSSFWorkbook workbook;
+        Sheet sheet;
 
         File out = new File(String.valueOf(Paths.get(path + "\\out")));
 

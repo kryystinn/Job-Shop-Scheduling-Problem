@@ -9,33 +9,54 @@ import logic.output.impl.ExcelWriterImpl;
 import logic.schedule.algorithm.ScheduleAlgorithm;
 import logic.schedule.rules.Rule;
 import logic.schedule.rules.impl.SPTRule;
-
 import java.util.*;
 
+/**
+ * Clase GTAlgorithm que representa el algoritmo de Giffler y Thompson.
+ *
+ */
 public class GTAlgorithm implements ScheduleAlgorithm {
 
-    private Instance inst;
-    private Rule rule;
-    private ConstraintGraph constraintGraph;
+    private final Instance inst;
+    private final Rule rule;
+    private final ConstraintGraph constraintGraph;
     private List<Operation> setA;
     private List<Operation> setB;
     private List<ResultTask> results;
     private Writer writer;
 
+    /**
+     * Constructor de la clase {@link GTAlgorithm} con la regla SPT por defecto.
+     *
+     * @param instance instancia a planificar
+     * @throws AlgorithmException si falla al ejecutar el algoritmo
+     */
     public GTAlgorithm(Instance instance) throws AlgorithmException {
         this(instance, new SPTRule());
     }
 
+    /**
+     * Constructor de la clase {@link GTAlgorithm}.
+     *
+     * @param instance instancia a planificar
+     * @param rule regla de prioridad para guiar al algoritmo
+     * @throws AlgorithmException si falla al ejecutar el algoritmo
+     */
     public GTAlgorithm(Instance instance, Rule rule) throws AlgorithmException {
         this.inst = CopyObject.copy(instance);
         this.rule = CopyObject.copy(rule);
         this.constraintGraph = new ConstraintGraph(this.inst);
     }
 
+    /**
+     * Método que ejecuta el algoritmo G&T.
+     *
+     * @return listado de tareas planificadas
+     */
     @Override
     public List<ResultTask> run() {
 
-        results = new ArrayList<ResultTask>();
+        results = new ArrayList<>();
 
         // Inicializar el set A
         initializeASet();
@@ -95,9 +116,10 @@ public class GTAlgorithm implements ScheduleAlgorithm {
 
     /**
      * Inicialización del conjunto A con las primeras operaciones sin planificar de cada trabajo
+     *
      */
     private void initializeASet(){
-        setA = new ArrayList<Operation>();
+        setA = new ArrayList<>();
 
         // coger la primera operación SIN PLANIFICAR de cada Job
         for (Job j: inst.getJobs()) {
@@ -111,7 +133,8 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     }
 
     /**
-     * Selecciona la operación del conjunto A con menor tiempo de fin
+     * Selecciona la operación del conjunto A con menor tiempo de fin.
+     *
      * @return la operación con menor tiempo de fin, que se denominará oPrime
      */
     private Operation getOPrimeOperation() {
@@ -133,10 +156,11 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     /**
      * Selecciona del conjunto A aquellas operaciones que puedan comenzar antes que o prima y que requieran la misma
      * máquina que ella. Como mínimo, el conjunto B tendrá la operación o prima.
+     *
      * @param oPrime, la operación con menor tiempo de fin del conjunto A
      */
     private void initializeBSet(Operation oPrime) {
-        setB = new ArrayList<Operation>();
+        setB = new ArrayList<>();
 
         if (oPrime.getProcessingTime() == 0)
             setB.add(oPrime);
@@ -152,7 +176,8 @@ public class GTAlgorithm implements ScheduleAlgorithm {
     }
 
     /**
-     * Elige la operación a planificar del conjunto B en función de la regla de prioridad deseada
+     * Elige la operación a planificar del conjunto B en función de la regla de prioridad deseada.
+     *
      * @return la operación elegida a planificar
      */
     private Operation getOStarOperation() {
@@ -200,7 +225,7 @@ public class GTAlgorithm implements ScheduleAlgorithm {
      */
     @Override
     public void writeStartingTimeMatrix(String path, String outputName, String name) {
-        List<String[]> scheduledJobs = new ArrayList<String[]>();
+        List<String[]> scheduledJobs = new ArrayList<>();
 
         for (int i = 1; i <= inst.getnJobs(); i++) {
             String[] job = new String[inst.getnMachines()];

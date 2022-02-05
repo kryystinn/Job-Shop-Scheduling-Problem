@@ -3,11 +3,15 @@ package logic.parser;
 
 import logic.exceptions.ParserException;
 
-import java.io.FileNotFoundException;
-
+/**
+ * Interfaz FileParser.
+ *
+ * @author Cristina Ruiz de Bucesta Crespo
+ *
+ */
 public interface FileParser<T> {
 
-    public String readFile(String name) throws ParserException;
+    String readFile(String name) throws ParserException;
 
-    public T parseFile(String data) throws ParserException;
+    T parseFile(String data) throws ParserException;
 }
